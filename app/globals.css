@@ -24,3 +24,7 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+/* in global CSS, works alongside tailwind */
+::selection {
+  @apply bg-yellow-300 text-black;
+}
