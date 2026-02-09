@@ -1,16 +1,19 @@
 
 import { useState } from "react";
-import { useAuth } from "@/lib/supabase/context";
+import { useAuth } from "@/lib/context";
 import { createClient } from "@/lib/supabase/SupabaseClient"
+
 
 
 export default function Dashboard() {
   const [isOpen, setIsOpen] = useState(false);
+
 const supabase = createClient();
 
+  const {session ,user} = useAuth()
+  
 
-  const {session} = useAuth()
-  console.log(session ,'session')
+  
   return (
     <div className="flex min-h-screen bg-[#0a0a0c] text-white font-sans">
       
@@ -37,7 +40,7 @@ const supabase = createClient();
           
           <div 
             className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-            onClick={() => setIsOpen(false)}
+            onClick={() => setIsOpen(false)} 
           />
 
           <div className="relative bg-gray-900 border border-gray-800 p-8 rounded-2xl w-full max-w-md shadow-2xl">
@@ -78,7 +81,7 @@ const supabase = createClient();
           
           <div className="flex items-center gap-3 bg-gray-800/30 px-4 py-2 rounded-full border border-gray-700/50">
             <span className="text-coral-400 text-lg">🔒</span>
-            <span className="text-sm text-gray-400">Hi, <span className="text-teal-400 font-medium">Username</span></span>
+            <span className="text-sm text-gray-400">Hi, <span className="text-teal-400 font-medium">{user?.full_name || "Username"}</span></span>
           </div>
         </header>
 

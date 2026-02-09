@@ -1,9 +1,20 @@
+import { useAuth } from "@/lib/context";
+import Link from "next/link";
+import { createClient } from "@/lib/supabase/SupabaseClient";
+import { User } from "@/lib/context";
 
 export default function SideBar() {
 
-   
-
-
+   const { session ,user } = useAuth();
+   const supabase = createClient();
+   function getInitials(user: User | null) {    
+    if (!user?.full_name) return "";
+    const parts = user.full_name.trim().split(" ");
+    return parts.map((p: string) => p[0].toUpperCase()).join("");
+  }
+  
+  const initials = getInitials(user);
+  
     return(
        <nav className="fixed top-0 left-0 h-screen w-64 bg-gray-900 border-r border-gray-800 p-6 flex flex-col justify-between z-30">
     <div>
@@ -36,14 +47,35 @@ export default function SideBar() {
     <div className="border-t border-gray-800 pt-4">
         <div className="flex items-center space-x-3 p-2 hover:bg-gray-800 rounded-lg transition duration-150 cursor-pointer">
             <div className="h-10 w-10 rounded-full bg-teal-600 flex items-center justify-center font-semibold text-white">
-                JD
+                {initials}
             </div>
             <div>
-                <p className="text-sm font-medium text-white">Jane Doe</p>
-                <button className="text-xs text-gray-400 hover:text-coral-400">Log Out</button>
-            </div>
-        </div>
+  <p className="text-sm font-medium text-white text-ellipsis overflow-hidden whitespace-nowrap max-w-[150px] 
+  truncate hover:max-w-full transition-all duration-300">{user?.full_name || 'guest'}  </p>
+  {session ? (
+    <div className="flex items-center space-x-2 hover:bg-gray-800 rounded-lg transition duration-150 cursor-pointer">
+      
+    
+      <button
+        className="text-lg text-teal-400 hover:text-coral-400 mt-2 hover:scale-105 transition"
+        onClick={() => supabase.auth.signOut()}
+      >
+        Log Out
+      </button>
     </div>
+  ) : (
+    <div className="flex items-center space-x-2">
+      <Link
+        href="/sign"
+          className="text-lg text-teal-400 hover:text-coral-400 mt-2 hover:scale-105 transition"
+      >
+        Sign In
+      </Link>
+    </div>
+  )}
+</div>
+</div>
+</div>
 </nav>
     )
 }
