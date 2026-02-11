@@ -5,19 +5,27 @@ import {
   useState,
   ReactNode,
 } from "react"
-import { createClient } from "./SupabaseClient"
+import { createClient } from "./supabase/SupabaseClient"
 import type { Session } from "@supabase/supabase-js"
 
 type AuthContextType = {
   session: Session | null
+  user: User | null
   authInitializing: boolean
+  
 }
-
+export type User = {
+  id: string
+  email: string
+  full_name: string
+  avatar_url: string
+}
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null)
   const [authInitializing, setAuthInitializing] = useState(true)
+const [user, setUser] = useState<User | null>(null)
 
   const supabase = createClient()
 
@@ -35,9 +43,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     return () => subscription.unsubscribe()
   }, [])
-
+const userProfile = async () => {
+  if (session) { 
+    const { data: profile } = await supabase .from("profiles") .select("*") .eq("id", session.user.id) .single();
+    setUser(profile);
+  } else {
+    setUser(null);
+  }
+}
+useEffect(() => {
+  userProfile();
+}, [session])
   return (
-    <AuthContext.Provider value={{ session, authInitializing }}>
+    <AuthContext.Provider value={{ user, session, authInitializing }}>
       {children}
     </AuthContext.Provider>
   )

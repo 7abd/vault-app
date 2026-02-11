@@ -4,7 +4,7 @@ import "./globals.css";
 import SideBar from "./components/sideBar";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/solid";
 import React from "react";
-import { AuthProvider } from "@/lib/supabase/context";
+import { AuthProvider } from "@/lib/context";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const [mobileOpen, setMobileOpen] = React.useState(false);

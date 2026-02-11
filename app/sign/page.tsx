@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { useAuth } from "@/lib/supabase/context"
+import { useAuth } from "@/lib/context"
 import { createClient } from "@/lib/supabase/SupabaseClient"
 import { useSearchParams } from "next/navigation"
 
