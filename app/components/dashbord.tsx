@@ -1,19 +1,15 @@
 
 import { useState } from "react";
 import { useAuth } from "@/lib/context";
-import { createClient } from "@/lib/supabase/SupabaseClient"
 import VaultModal from "./vaultModal";
 
 
 export default function Dashboard() {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState <boolean> (false);
 
-  const supabase = createClient();
-
-  const {session ,user} = useAuth()
+  const {user,vaultItems} = useAuth()
   
-
-  
+  console.log(vaultItems);
   return (
     <div className="flex min-h-screen bg-[#0a0a0c] text-white font-sans">
       
@@ -27,15 +23,15 @@ export default function Dashboard() {
             <div className="mt-4">
 
  
-   
-            <button 
+  
+      <button 
         onClick={() => setIsOpen(true)}
         className="bg-teal-400 text-black px-6 py-3 rounded-xl font-bold hover:scale-105 transition"
       >
         + Add New Item
       </button>
 
-      <VaultModal isOpen={isOpen} setIsOpen={setIsOpen} />
+      <VaultModal isOpen={isOpen} setIsOpen={setIsOpen} setItemId={setItemId} />
       
     </div>
   

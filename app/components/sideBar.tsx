@@ -1,7 +1,7 @@
 import { useAuth } from "@/lib/context";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/SupabaseClient";
-import { User } from "@/lib/context";
+import type { User } from "@/lib/types";
 
 export default function SideBar() {
 
