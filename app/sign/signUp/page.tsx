@@ -3,7 +3,6 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { createClient } from "@/lib/supabase/SupabaseClient"
-import { useAuth } from "@/lib/supabase/context"
 
 
 export default function SignUp() {
