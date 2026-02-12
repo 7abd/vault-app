@@ -2,7 +2,7 @@
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();
 
-const PBKDF2_ITERATIONS = 150_000; // reasonable starting point
+const PBKDF2_ITERATIONS = 150_000; 
 const PBKDF2_HASH = "SHA-256";
 const AES_ALGO = "AES-GCM";
 const AES_KEY_LENGTH = 256; // bits
@@ -24,7 +24,17 @@ function base64ToBuffer(b64: string) {
   }
   return bytes.buffer;
 }
+     
+export function fileToBase64(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
 
+    reader.onload = () => resolve(reader.result as string)
+    reader.onerror = reject
+
+    reader.readAsDataURL(file)
+  })
+}
 
 export async function deriveCryptoKey(masterPassword: string, salt: string): Promise<CryptoKey> {
   const baseKey = await window.crypto.subtle.importKey(
