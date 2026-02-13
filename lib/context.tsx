@@ -7,33 +7,8 @@ import {
 } from "react"
 import { createClient } from "./supabase/SupabaseClient"
 import type { Session } from "@supabase/supabase-js"
+import type { AuthContextType,User,VaultEntry, } from "./types"
 
-
-type AuthContextType = {
-  session: Session | null
-  user: User | null
-  authInitializing: boolean
-  vaultItems:VaultEntry[] | null
-  fetchVaultItems: () => Promise<void>
-}
-export type User = {
-  id: string
-  email: string
-  full_name: string
-  avatar_url: string
-}
-export interface VaultEntry {
-  id: string; 
-  user_id: string; 
-  title: string; 
-  type: string; 
-  encrypted_content: string; 
-  encryption_iv: string; 
-  next_unlock_at: string; 
-  duration_minutes: number; 
-  frequency: string; 
-  created_at: string; 
-}
 
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -43,6 +18,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [authInitializing, setAuthInitializing] = useState(true)
 const [user, setUser] = useState<User | null>(null)
 const [vaultItems ,setVaultItems] = useState <VaultEntry[] | null>([])
+
 
   const supabase = createClient()
 
@@ -68,11 +44,8 @@ const userProfile = async () => {
     setUser(null);
   }
 }
-type VaultItemContent = {
-  title: string
-  type: string
-  duration: number
-}
+
+
 const fetchVaultItems = async () => {
   const { data, error } = await supabase
     .from("vault_items")
@@ -86,9 +59,12 @@ const fetchVaultItems = async () => {
 
 useEffect(() => {
   userProfile();
+  
 }, [session])
+
+useEffect(() => { if (user?.id) { fetchVaultItems(); } }, [user?.id]);
   return (
-    <AuthContext.Provider value={{fetchVaultItems,vaultItems, user, session, authInitializing }}>
+    <AuthContext.Provider value={{fetchVaultItems,setVaultItems,vaultItems, user, session, authInitializing }}>
       {children}
     </AuthContext.Provider>
   )
