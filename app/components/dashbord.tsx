@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "@/lib/context";
 import VaultModal from "./vaultModal";
 
@@ -7,9 +7,16 @@ import VaultModal from "./vaultModal";
 export default function Dashboard() {
   const [isOpen, setIsOpen] = useState <boolean> (false);
 
-  const {user,vaultItems} = useAuth()
-  
-  console.log(vaultItems);
+  const {user,vaultItems,fetchVaultItems} = useAuth()
+ 
+const vaultCards = vaultItems?.map((vaultItem) => {
+  return <VaultCard
+  key={vaultItem.id} 
+  title={vaultItem.title}
+  status="Unlocks Dec 23, 2024" 
+  isLocked 
+/>
+})
   return (
     <div className="flex min-h-screen bg-[#0a0a0c] text-white font-sans">
       
@@ -31,7 +38,7 @@ export default function Dashboard() {
         + Add New Item
       </button>
 
-      <VaultModal isOpen={isOpen} setIsOpen={setIsOpen} setItemId={setItemId} />
+      <VaultModal isOpen={isOpen} setIsOpen={setIsOpen} />
       
     </div>
   
@@ -50,40 +57,9 @@ export default function Dashboard() {
         <p className="text-xs text-gray-500 uppercase tracking-widest mb-6 font-semibold">Frequency</p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          
-          <VaultCard 
-            title="Holiday Photos" 
-            status="Unlocks Dec 23, 2024" 
-            isLocked 
-          />
-          <VaultCard 
-            title="Private Key" 
-            status="Opens in 3 days" 
-            isLocked 
-          />
-          <VaultCard 
-            title="Holiday Photos" 
-            status="Unlocks Dec 23, 2024" 
-            isLocked 
-          />
-           <VaultCard 
-            title="Private Recipe" 
-            status="Opens in 5.8 days" 
-            isLocked 
-          />
-
-          <VaultCard 
-            title="Secret Recipe" 
-            status="Next: Nov 1, 2026" 
-            isBlurred 
-            bgImage="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&q=80&w=200"
-          />
-          <VaultCard 
-            title="Secret Recipe" 
-            status="Next: Feb 20, 2025" 
-            isBlurred 
-            hasCheck
-          />
+     
+        {vaultCards}
+    
         </div>
       </main>
     </div>

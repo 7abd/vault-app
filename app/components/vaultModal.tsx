@@ -13,7 +13,7 @@ export default function VaultModal({ isOpen, setIsOpen }:
    { isOpen: boolean; setIsOpen: Dispatch<SetStateAction<boolean>>}) {
       const [content,setContent] = useState <Content> ({title:'' , secretMsg:'' , duration:0,type:'note'})
    const supabase = createClient()
-   const {user,fetchVaultItems} = useAuth();
+   const {user,setVaultItems} = useAuth();
   
       const handleChange =  (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value } = e.target
@@ -58,17 +58,18 @@ export default function VaultModal({ isOpen, setIsOpen }:
               duration_minutes: content.duration,
               next_unlock_at: new Date(Date.now() + content.duration * 60 * 1000),
               frequency: "once",
-            })
-           
+            }).select('*').single()
+
+            
+          
           
           if (error) {
             console.error("Error inserting vault item:", error);
           } else {
-            
-           await fetchVaultItems()
+             setVaultItems(prev => prev ? [data, ...prev] : [data])
           }
           setIsOpen(false)
-          setContent({title:'' , secretMsg:'' , duration:0,type:'note'})
+        //  setContent({title:'' , secretMsg:'' , duration:0,type:'note'})
     }
       console.log(content)
     return (
