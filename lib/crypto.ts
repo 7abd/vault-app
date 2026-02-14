@@ -7,7 +7,7 @@ const PBKDF2_HASH = "SHA-256";
 const AES_ALGO = "AES-GCM";
 const AES_KEY_LENGTH = 256; // bits
 
-function bufferToBase64(buffer: ArrayBuffer | Uint8Array) {
+export function bufferToBase64(buffer: ArrayBuffer | Uint8Array) {
   const bytes = buffer instanceof Uint8Array ? buffer : new Uint8Array(buffer);
   let binary = "";
   for (let i = 0; i < bytes.byteLength; i++) {

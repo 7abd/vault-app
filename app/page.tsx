@@ -1,6 +1,4 @@
 'use client'
-import SideBar from "./components/sideBar";
-import SignIn from "./sign/page";
 import Dashboard from "./components/dashbord";
 export default function Home() {
   return (
@@ -8,8 +6,7 @@ export default function Home() {
     <div className="overflow-hidden relative" >
 
  
-     <Dashboard/>
-      
+      <Dashboard/>
      
     </div>
   
