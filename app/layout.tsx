@@ -5,6 +5,7 @@ import SideBar from "./components/sideBar";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/solid";
 import React from "react";
 import { AuthProvider } from "@/lib/context";
+import { VaultProvider } from "@/lib/vaultContext";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const [mobileOpen, setMobileOpen] = React.useState(false);
@@ -12,6 +13,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <AuthProvider>
+        <VaultProvider>
       <body className="flex h-screen relative">
 
         <aside className="hidden sm:block w-64 bg-[#121212]">
@@ -51,6 +53,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
         <main className="flex-1">{children}</main>
       </body>
+      </VaultProvider>
       </AuthProvider>
     </html>
   );
