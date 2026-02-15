@@ -38,4 +38,19 @@ export type AuthContextType = {
 
 }
 
+export type VaultState = {
+  isUnlocked: boolean;
+  cryptoKey: CryptoKey | null;
+  error: string | null;
+  isLoading: boolean;
+};
+
+export type VaultActions = {
+  unlockVault: (masterPassword: string) => Promise<boolean>;
+ lockVault: () => void;
+ 
+};
+
+export type VaultContextType = VaultState & VaultActions;
+
 
