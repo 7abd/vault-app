@@ -2,6 +2,7 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { useVaultCtx } from "@/lib/vaultContext"
+import Link from "next/link"
 export default function UnlockVaultModal() {
 
   const router = useRouter()
@@ -90,7 +91,12 @@ export default function UnlockVaultModal() {
           </div>
         </div>
         )}
-      
+       <p className="text-gray-400 text-sm text-center mt-4">
+          Don&apos;t have a password?{" "}
+          <Link href="/password/setUp" className="text-teal-400">
+            Create a password
+          </Link>
+        </p>
       </div>
     </div>
   )
