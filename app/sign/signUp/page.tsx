@@ -5,8 +5,16 @@ import { useRouter } from "next/navigation"
 import { createClient } from "@/lib/supabase/SupabaseClient"
 
 
+type userInfo = {
+  name:string  
+  email: string
+  password:string 
+  confPassword:string
+
+}
+
 export default function SignUp() {
-  const [userInfo, setUserInfo] = useState({ name: '', email: '', password: '', confPassword: '' })
+  const [userInfo, setUserInfo] = useState<userInfo>({ name: '', email: '', password: '', confPassword: '' })
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
