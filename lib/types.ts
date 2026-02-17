@@ -48,7 +48,9 @@ export type VaultState = {
 export type VaultActions = {
   unlockVault: (masterPassword: string) => Promise<boolean>;
  lockVault: () => void;
- 
+clearError: () => void;
+withDecrypted: <T>(fn: (key: CryptoKey) => Promise<T>) => Promise<T | null>;
+getOrCreateVaultMetadata: (password: string) => Promise<{ salt: string; verifier: string; isNew: boolean }>;
 };
 
 export type VaultContextType = VaultState & VaultActions;
