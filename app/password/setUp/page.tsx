@@ -13,7 +13,7 @@ export default function SetUpPassword() {
   const [passwordField, setPasswordField] = useState<Password>({ password: '', confirmPassword: '' })
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState<boolean>(false)
-  const { getOrCreateVaultMetadata } = useVaultCtx()
+  const { createVaultMetadata } = useVaultCtx()
   const router = useRouter()
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -24,7 +24,7 @@ export default function SetUpPassword() {
     e.preventDefault();
     setError(null)
     
-    // 1. Validation
+    
     if (passwordField.confirmPassword !== passwordField.password) {
       return setError('Passwords do not match')
     }
@@ -37,11 +37,11 @@ export default function SetUpPassword() {
 
     setLoading(true)
     try {
-      const { salt, verifier, isNew } = await getOrCreateVaultMetadata(passwordField.password);
+      const {  isNew } = await createVaultMetadata(passwordField.password);
       if (!isNew) {
         setError('You have already set up your password')
       } else {
-         router.push('/dashboard')
+         router.push('/')
       }
     } catch (err) {
       setError("An unexpected error occurred.")
