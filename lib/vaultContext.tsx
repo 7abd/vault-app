@@ -33,70 +33,71 @@ export function VaultProvider({children} : {children:ReactNode}) {
     setIsLoading(false);
 
   }, []);
+  const createVaultMetadata = async (password: string) => {
 
-    const unlockVault = async (password:string): Promise<boolean> => {
-      setIsLoading(true)
-      setError(null)
+
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    if (userError || !user) throw new Error(userError?.message || "User not found");
+  
+    let verifier = user.user_metadata?.vault_verifier;
+  
+    if (!verifier) {
+      const newSalt = bufferToBase64(generateSalt());
+      const newVerifier = await deriveVerifier(password, newSalt);
+  
+      const { error: updateError } = await supabase.auth.updateUser({
+        data: { vault_salt: newSalt, vault_verifier: newVerifier }
+      });
+  
+      if (updateError) throw updateError;
       
-      if (!password || password.trim().length === 0) {
-        setError(" password cannot be empty");
-        setIsLoading(false)
-        return false
-      }
-      
-      const { data: { user }, error: userError } = await supabase.auth.getUser()
-      if (userError) {
-        setError(userError.message)
-        setIsLoading(false)
-        return false
-      }
-    
-      const vaultSalt = user?.user_metadata?.vault_salt;
-      const vaultVerifier = user?.user_metadata?.vault_verifier
-      
-      if (!user?.user_metadata?.vault_verifier) {
-        const salt = generateSalt()
-        const saltBase64 = bufferToBase64(salt)
-        const verifier = await deriveVerifier(password, saltBase64)
-      
-        const { data: updatedUser, error: updateError } = await supabase.auth.updateUser({
-          data: {
-            vault_salt: saltBase64,
-            vault_verifier: verifier
-          }
-        })
-    
-        console.log("Update result:", updatedUser)
-        if (updateError) {
-          console.error("Update error:", updateError)
-          setError(updateError.message)
-          setIsLoading(false)
-          return false
-        }
-        
-        const key = await deriveCryptoKey(password, saltBase64)
-        setCryptoKey(key)
-        setIsUnlocked(true)
-        setIsLoading(false)
-        router.push('/')
-        return true
-      }
-      
-      const verifier = await deriveVerifier(password, vaultSalt)
-      
-      if (verifier === vaultVerifier) {
-        const key = await deriveCryptoKey(password, vaultSalt)
-        setCryptoKey(key)
-        setIsUnlocked(true)
-        setIsLoading(false)
-        router.push('/')
-        return true
-      } else {
-        setError('your password is incorrect try again')
-        setIsLoading(false)
-        return false
-      }
+      return {  isNew: true };
     }
+  
+    return {  isNew: false };
+  };
+
+  
+  const unlockVault = async (password: string): Promise<boolean> => {
+    setIsLoading(true);
+    setError(null);
+  
+    if (!password?.trim()) {
+      setError("Password cannot be empty");
+      setIsLoading(false);
+      return false;
+    }
+  
+    try {
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    if (userError || !user) throw new Error(userError?.message || "User not found");
+  
+    let salt = user.user_metadata?.vault_salt;
+    let verifier = user.user_metadata?.vault_verifier;
+      if(!verifier) {
+      setError('vault not initialized.')
+      return false ;
+      }
+     
+        const derived = await deriveVerifier(password, salt);
+        if (derived !== verifier) {
+          setError("Your password is incorrect, try again");
+          return false;
+        }
+      
+      const key = await deriveCryptoKey(password, salt);
+      setCryptoKey(key);
+      setIsUnlocked(true);
+      router.push('/');
+      return true;
+  
+    } catch (err: any) {
+      setError(err.message);
+      return false;
+    } finally {
+      setIsLoading(false);
+    }
+  };
     const clearError = useCallback(() => {
         setError(null);
       }, []);
@@ -133,9 +134,10 @@ export function VaultProvider({children} : {children:ReactNode}) {
           unlockVault,
           lockVault,
           withDecrypted,
-         clearError
+         clearError,
+         createVaultMetadata
         }),
-        [isUnlocked, cryptoKey, error, isLoading, unlockVault, lockVault, withDecrypted,clearError]
+        [isUnlocked, cryptoKey, error, isLoading, unlockVault, lockVault, withDecrypted,clearError,createVaultMetadata]
       );
     
     
