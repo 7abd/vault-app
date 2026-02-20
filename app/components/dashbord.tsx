@@ -1,22 +1,30 @@
 
-import { useEffect, useState } from "react";
+import {  useState } from "react";
 import { useAuth } from "@/lib/context";
 import VaultModal from "./vaultModal";
-
+import { VaultEntry } from "@/lib/types";
+import VaultView from "./vaultView";
 
 export default function Dashboard() {
   const [isOpen, setIsOpen] = useState <boolean> (false);
-
+  const [vaultItem ,setVaultItem] = useState<VaultEntry | null>(null);
   const {user,vaultItems,fetchVaultItems} = useAuth()
- 
-const vaultCards = vaultItems?.map((vaultItem) => {
+  const [vaultOpen ,setVaultOpen] = useState<boolean>(true)
+  
+const vaultCards = vaultItems?.map((item) => {
   return <VaultCard
-  key={vaultItem.id} 
-  title={vaultItem.title}
+  key={item.id} 
+  title={item.title}
   status="Unlocks Dec 23, 2024" 
   isLocked 
+  onClick={() => {
+  setVaultItem(item)
+  setVaultOpen(false)
+}}
 />
 })
+
+
   return (
     <div className="flex min-h-screen bg-[#0a0a0c] text-white font-sans">
       
@@ -55,11 +63,11 @@ const vaultCards = vaultItems?.map((vaultItem) => {
         </header>
 
         <p className="text-xs text-gray-500 uppercase tracking-widest mb-6 font-semibold">Frequency</p>
-
+        {!vaultOpen && <VaultView  vaultItem={vaultItem} setVaultOpen={setVaultOpen}/>}
+        
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
      
-        {vaultCards}
-    
+        { vaultOpen && vaultCards}
         </div>
       </main>
     </div>
@@ -68,9 +76,11 @@ const vaultCards = vaultItems?.map((vaultItem) => {
 
 
 
-function VaultCard({ title, status, isLocked, isBlurred, bgImage, hasCheck }: any) {
+function VaultCard({ title, status, isLocked, isBlurred, bgImage, hasCheck, onClick }: any) {
   return (
-    <div className="relative group overflow-hidden rounded-3xl aspect-[4/5] 
+    <div 
+    onClick={onClick}
+    className="relative group overflow-hidden rounded-3xl aspect-[4/5] 
     bg-gradient-to-b from-gray-800/40 to-gray-900/40 border border-white/5 p-6 flex 
     flex-col items-center justify-center text-center transition-transform hover:scale-[1.02] cursor-pointer shadow-2xl">
       
