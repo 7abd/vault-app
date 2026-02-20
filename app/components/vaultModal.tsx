@@ -2,24 +2,22 @@ import { useState, Dispatch, SetStateAction } from "react"
 import { encryptWithKey ,generateSalt ,deriveCryptoKey,fileToBase64} from "@/lib/crypto";
 import { createClient } from "@/lib/supabase/SupabaseClient";
 import { useAuth } from "@/lib/context";
-type Content = {
- title: string 
-  secretMsg : string 
-  duration : number
-  type: 'note' | 'password' | 'image'
-}
+import { Content } from "@/lib/types";
+import { useVaultCtx } from "@/lib/vaultContext";
 
 export default function VaultModal({ isOpen, setIsOpen }:
    { isOpen: boolean; setIsOpen: Dispatch<SetStateAction<boolean>>}) {
       const [content,setContent] = useState <Content> ({title:'' , secretMsg:'' , duration:0,type:'note'})
-   const supabase = createClient()
-   const {user,setVaultItems} = useAuth();
+      const [error,setError] = useState<string | null> (null)
+      const supabase = createClient()
+      const {user,setVaultItems} = useAuth();
+      const { cryptoKey} = useVaultCtx()
   
       const handleChange =  (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-        const { name, value } = e.target
-        setContent((prev) => ({ ...prev, [name]: value }))
+      const { name, value } = e.target
+      setContent((prev) => ({ ...prev, [name]: value }))
 
-      }
+    }
  
       async function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
         const file = e.target.files?.[0]
@@ -41,10 +39,11 @@ export default function VaultModal({ isOpen, setIsOpen }:
       
     const handleSubmit =  async (e: React.FormEvent<HTMLFormElement>) => {
             e.preventDefault();
-            const saltUint8 = generateSalt();
-            const salt = btoa(String.fromCharCode(...saltUint8));
-            const key = await deriveCryptoKey("myMasterPassword", salt);
-            const { encrypted_content, encryption_iv } = await encryptWithKey(content.secretMsg, key);
+            if(!cryptoKey) {
+              setError('You need to unlock your vault first')
+              return
+            }
+            const { encrypted_content, encryption_iv } = await encryptWithKey(content.secretMsg, cryptoKey);
         
             if (!user) return;
             const { data, error } = await supabase
@@ -64,14 +63,14 @@ export default function VaultModal({ isOpen, setIsOpen }:
           
           
           if (error) {
-            console.error("Error inserting vault item:", error);
+            setError(error.message);
           } else {
              setVaultItems(prev => prev ? [data, ...prev] : [data])
           }
           setIsOpen(false)
-        //  setContent({title:'' , secretMsg:'' , duration:0,type:'note'})
+         setContent({title:'' , secretMsg:'' , duration:0,type:'note'})
+         setError(null)
     }
-      console.log(content)
     return (
         isOpen && (
             <div className="fixed inset-0 z-50 flex items-center justify-center">
@@ -131,7 +130,11 @@ export default function VaultModal({ isOpen, setIsOpen }:
             className="w-full bg-gray-800 p-3 rounded-lg border border-gray-700"
           />
         )}
-    
+     {error && (
+          <div className="p-3 mb-4 rounded bg-red-500/10 border border-red-500 text-red-500 text-sm text-center">
+            {error}
+          </div>
+        )}
                 <div className="mt-6 flex gap-3">
                   <button 
                     onClick={() => setIsOpen(false)}
