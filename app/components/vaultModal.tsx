@@ -7,7 +7,7 @@ import { useVaultCtx } from "@/lib/vaultContext";
 
 export default function VaultModal({ isOpen, setIsOpen }:
    { isOpen: boolean; setIsOpen: Dispatch<SetStateAction<boolean>>}) {
-      const [content,setContent] = useState <Content> ({title:'' , secretMsg:'' , duration:0,type:'note'})
+      const [content,setContent] = useState <Content> ({title:'' , secretMsg:'' , duration:0,type:'note',frequency:'once'})
       const [error,setError] = useState<string | null> (null)
       const supabase = createClient()
       const {user,setVaultItems} = useAuth();
@@ -56,7 +56,7 @@ export default function VaultModal({ isOpen, setIsOpen }:
               encryption_iv,
               duration_minutes: content.duration,
               next_unlock_at: new Date(Date.now() + content.duration * 60 * 1000),
-              frequency: "once",
+              frequency: content.frequency,
             }).select('*').single()
 
             
@@ -68,7 +68,7 @@ export default function VaultModal({ isOpen, setIsOpen }:
              setVaultItems(prev => prev ? [data, ...prev] : [data])
           }
           setIsOpen(false)
-         setContent({title:'' , secretMsg:'' , duration:0,type:'note'})
+         setContent({title:'' , secretMsg:'' , duration:0,type:'note',frequency:'once'})
          setError(null)
     }
     return (
@@ -103,6 +103,35 @@ export default function VaultModal({ isOpen, setIsOpen }:
                     <option value="password">Password</option>
                     <option value="image">Image</option>
                   </select>
+                  <p className="text-[10px] text-gray-600 px-1">
+                    Categorizes your secret to optimize how it is displayed and handled.
+                  </p>    
+                <select 
+                  className="w-full bg-gray-800/50 border border-gray-700 text-gray-300 p-3.5 
+                  rounded-xl appearance-none outline-none focus:border-teal-400/50 transition-all 
+                  cursor-pointer text-sm font-medium"
+                  name="frequency"
+                  onChange={handleChange}
+                >
+                  <option value="once">Once (Normal Vault)</option>
+                  <option value="hourly">Hourly</option>
+                  <option value="daily">Daily</option>
+                  <option value="2-days">Every 2 Days</option>
+                  <option value="weekly">Weekly</option>
+                  <option value="2-weeks">Every 2 Weeks</option>
+                  <option value="monthly">Monthly</option>
+                  <option value="2-months">Every 2 Months</option>
+                  <option value="3-months">Quarterly (3 Months)</option>
+                  <option value="6-months">Bi-annually (6 Months)</option>
+                  <option value="yearly">Yearly</option>
+                </select>
+                
+               
+
+                  <p className="text-[10px] text-gray-600 px-1">
+                    Controls how long the vault stays "cooling down" after use.
+                  </p>
+
                   <input
                       type="number"
                       name="duration"
@@ -112,6 +141,9 @@ export default function VaultModal({ isOpen, setIsOpen }:
                       placeholder="Lock duration (minutes)"
                       className="w-full bg-gray-800 p-3 rounded-lg border border-gray-700 outline-none focus:border-teal-400"
                         />
+                        <p className="text-[10px] text-gray-600 px-1">
+                          Sets the "Access Window"—how many minutes the vault stays open before auto-locking.
+                        </p>
           {content.type !== 'image' && 
                   <textarea 
                   name="secretMsg"
