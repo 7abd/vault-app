@@ -5,7 +5,7 @@ const decoder = new TextDecoder();
 const PBKDF2_ITERATIONS = 150_000; 
 const PBKDF2_HASH = "SHA-256";
 const AES_ALGO = "AES-GCM";
-const AES_KEY_LENGTH = 256; // bits
+const AES_KEY_LENGTH = 256; 
 
 export function bufferToBase64(buffer: ArrayBuffer | Uint8Array) {
   const bytes = buffer instanceof Uint8Array ? buffer : new Uint8Array(buffer);
@@ -45,7 +45,6 @@ export async function deriveCryptoKey(masterPassword: string, salt: string): Pro
     ["deriveBits", "deriveKey"]
   );
 
-  // derive a key for AES-GCM
   const key = await window.crypto.subtle.deriveKey(
     {
       name: "PBKDF2",

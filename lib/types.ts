@@ -51,8 +51,17 @@ export type VaultActions = {
 clearError: () => void;
 withDecrypted: <T>(fn: (key: CryptoKey) => Promise<T>) => Promise<T | null>;
 createVaultMetadata: (password: string) => Promise<{  isNew: boolean }>;
+setError: React.Dispatch<React.SetStateAction<string | null>>;
+
 };
 
 export type VaultContextType = VaultState & VaultActions;
 
 
+ export type Content = {
+  title: string 
+   secretMsg : string 
+   duration : number
+   type: 'note' | 'password' | 'image'
+   frequency:string
+ }
