@@ -29,7 +29,43 @@ export default function VaultView({ vaultItem, setVaultOpen }: {
     handleDecrypt();
   }, [vaultItem, withDecrypted]);
 
+  function getCurrentUnlockWindow() {
+    let now = new Date();
+    
+    let start = new Date(vaultItem!.created_at);
+    let next = new Date(start);
+  
+    
+    while (next <= now) {
+      switch (vaultItem?.frequency) {
+        case 'hourly':
+          next.setHours(next.getHours() + 1);
+          break;
+        case 'daily':
+          next.setDate(next.getDate() + 1);
+          break;
+        case 'weekly':
+          next.setDate(next.getDate() + 7);
+          break;
+        case 'monthly':
+          next.setMonth(next.getMonth() + 1);
+          break;
+        case 'yearly':
+          next.setFullYear(next.getFullYear() + 1);
+          break;
+      }
+    }
+  
+    let windowStart = new Date(next);
+    let windowEnd = new Date(windowStart);
+    windowEnd.setMinutes(windowEnd.getMinutes() + vaultItem!.duration_minutes);
+  
+    return { windowStart, windowEnd };
+  }
+  
 
+  
+  
 
 const handleDelete = async () => {
   const confirmDelete = confirm("Are you sure? This cannot be undone.");
