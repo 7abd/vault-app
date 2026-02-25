@@ -29,9 +29,6 @@ export default function VaultView({ vaultItem, setVaultOpen }: {
     handleDecrypt();
   }, [vaultItem, withDecrypted]);
 
-  
-  
-  
 
 const handleDelete = async () => {
   const confirmDelete = confirm("Are you sure? This cannot be undone.");
@@ -45,6 +42,8 @@ const handleDelete = async () => {
   if (error) setError(error.message)
   else setVaultOpen(false); 
 };
+
+
 let now = new Date();
 
 const { windowStart, windowEnd } = useMemo(() => {
@@ -52,39 +51,56 @@ const { windowStart, windowEnd } = useMemo(() => {
     return { windowStart: new Date(), windowEnd: new Date() };
   }
 
-  let start = new Date(vaultItem.created_at);
-  let next = new Date(start);
-  let prev = new Date(next);
 
-  let safety = 0; 
+  const startTs = new Date(vaultItem.created_at).getTime();
+  const nowTs = Date.now();
+  const durationMs = (vaultItem.duration_minutes || 0) * 60000;
+
+  type FrequencyKey = 'minutely' | 'hourly' | 'daily' | '2-days' | 'weekly' | '2-weeks';
+
+  const msMap: Record<FrequencyKey, number> = {
+    minutely: 3 * 60000,// for testing purposes
+    hourly: 60 * 60000,
+    daily: 24 * 60 * 60000,
+    '2-days': 48 * 60 * 60000,
+    weekly: 7 * 24 * 60 * 60000,
+    '2-weeks': 14 * 24 * 60 * 60000,
+  };
+  let targetStart;
   
-  while (next <= now && safety < 1000) {
-    safety++;
-    prev = new Date(next);
-    
-    switch (vaultItem.frequency) {
-      case 'hourly': next.setHours(next.getHours() + 1); break;
-      case 'daily': next.setDate(next.getDate() + 1); break;
-      case '2-days': next.setDate(next.getDate() + 2); break;
-      case 'weekly': next.setDate(next.getDate() + 7); break;
-      case '2-weeks': next.setDate(next.getDate() + 14); break;
-      case 'monthly': next.setMonth(next.getMonth() + 1); break;
-      case '2-month': next.setMonth(next.getMonth() + 2); break;
-      case '3-month': next.setMonth(next.getMonth() + 3); break;
-      case '6-month': next.setMonth(next.getMonth() + 6); break;
-      case 'yearly': next.setFullYear(next.getFullYear() + 1); break;
-      default: 
-        next.setFullYear(next.getFullYear() + 100);
+  if (vaultItem.frequency in msMap) {
+    const interval = msMap[vaultItem.frequency as FrequencyKey];
+    const elapsed = nowTs - startTs;
+    const currentCycleStart = startTs + Math.floor(elapsed / interval) * interval;
+  
+    if (nowTs > currentCycleStart + durationMs) {
+      targetStart = new Date(currentCycleStart + interval);
+    } else {
+      targetStart = new Date(currentCycleStart);
     }
+  } else {
+
+    let start = new Date(vaultItem.created_at);
+    let next = new Date(start);
+    while (next.getTime() + durationMs <= nowTs) {
+  
+      switch (vaultItem.frequency) {
+        case 'monthly': next.setMonth(next.getMonth() + 1); break;
+        case '2-month': next.setMonth(next.getMonth() + 2); break;
+        case '3-month': next.setMonth(next.getMonth() + 3); break;
+        case '6-month': next.setMonth(next.getMonth() + 6); break;
+        case 'yearly': next.setFullYear(next.getFullYear() + 1); break;
+        default: 
+          next.setFullYear(next.getFullYear() + 100);
+      }
+    }
+  
+    targetStart = next;
   }
+  const windowEnd = new Date(targetStart.getTime() + durationMs);
+  return { windowStart: targetStart, windowEnd };
 
-  let wStart = new Date(prev);
-  let wEnd = new Date(wStart);
-  wEnd.setMinutes(wEnd.getMinutes() + (vaultItem.duration_minutes || 0));
-
-  return { windowStart: wStart, windowEnd: wEnd };
-}, [vaultItem]);
-
+}, [vaultItem,now]);
 
 const isOnce = vaultItem?.frequency === 'once';
 const isLocked = !isOnce && (now < windowStart || now > windowEnd);
@@ -133,7 +149,7 @@ function displayContent() {
           Delete
         </button>
       </div>
-      { updateOpen &&    <UpdateModal islocked={isLocked} setUpdateOpen={setUpdateOpen}  vaultItem={vaultItem}
+      { updateOpen &&    <UpdateModal isLocked={isLocked} setUpdateOpen={setUpdateOpen}  vaultItem={vaultItem}
      initialContent={content}  />}
     </div>
   )
