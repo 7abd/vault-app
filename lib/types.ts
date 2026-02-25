@@ -15,7 +15,6 @@ export interface VaultEntry {
   type: string
   encrypted_content: string
   encryption_iv: string
-  next_unlock_at: string
   duration_minutes: number
   frequency: string
   created_at: string
