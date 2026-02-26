@@ -5,6 +5,8 @@ import { useState, useEffect,useMemo } from "react";
 import { decryptWithKey } from "@/lib/crypto";
 import { createClient } from "@/lib/supabase/SupabaseClient";
 import UpdateModal from "./updateModal";
+import { useVaultTimer } from "@/lib/vaultTimerLogic";
+import { Copy,Check } from "lucide-react";
 
 
 export default function VaultView({ vaultItem, setVaultOpen }: { 
@@ -14,8 +16,11 @@ export default function VaultView({ vaultItem, setVaultOpen }: {
   const [content, setContent] = useState<string | null>(null)
   const { withDecrypted, error,setError } = useVaultCtx()
   const [updateOpen,setUpdateOpen] = useState<boolean>(false)
+  const [copied, setCopied] = useState(false)
   
   const supabase = createClient()
+
+  const {isLocked,  windowStart, timeUntilChange} = useVaultTimer(vaultItem)
   useEffect(() => {
     if (!vaultItem) return;
     
@@ -43,87 +48,68 @@ const handleDelete = async () => {
   else setVaultOpen(false); 
 };
 
+const handleCopy = async () => {
+  if (!content) return;
 
-let now = new Date();
-
-const { windowStart, windowEnd } = useMemo(() => {
-  if (!vaultItem || vaultItem.frequency === 'once') {
-    return { windowStart: new Date(), windowEnd: new Date() };
-  }
-
-
-  const startTs = new Date(vaultItem.created_at).getTime();
-  const nowTs = Date.now();
-  const durationMs = (vaultItem.duration_minutes || 0) * 60000;
-
-  type FrequencyKey = 'minutely' | 'hourly' | 'daily' | '2-days' | 'weekly' | '2-weeks';
-
-  const msMap: Record<FrequencyKey, number> = {
-    minutely: 3 * 60000,// for testing purposes
-    hourly: 60 * 60000,
-    daily: 24 * 60 * 60000,
-    '2-days': 48 * 60 * 60000,
-    weekly: 7 * 24 * 60 * 60000,
-    '2-weeks': 14 * 24 * 60 * 60000,
-  };
-  let targetStart;
-  
-  if (vaultItem.frequency in msMap) {
-    const interval = msMap[vaultItem.frequency as FrequencyKey];
-    const elapsed = nowTs - startTs;
-    const currentCycleStart = startTs + Math.floor(elapsed / interval) * interval;
-  
-    if (nowTs > currentCycleStart + durationMs) {
-      targetStart = new Date(currentCycleStart + interval);
-    } else {
-      targetStart = new Date(currentCycleStart);
-    }
-  } else {
-
-    let start = new Date(vaultItem.created_at);
-    let next = new Date(start);
-    while (next.getTime() + durationMs <= nowTs) {
-  
-      switch (vaultItem.frequency) {
-        case 'monthly': next.setMonth(next.getMonth() + 1); break;
-        case '2-month': next.setMonth(next.getMonth() + 2); break;
-        case '3-month': next.setMonth(next.getMonth() + 3); break;
-        case '6-month': next.setMonth(next.getMonth() + 6); break;
-        case 'yearly': next.setFullYear(next.getFullYear() + 1); break;
-        default: 
-          next.setFullYear(next.getFullYear() + 100);
-      }
-    }
-  
-    targetStart = next;
-  }
-  const windowEnd = new Date(targetStart.getTime() + durationMs);
-  return { windowStart: targetStart, windowEnd };
-
-}, [vaultItem,now]);
-
-const isOnce = vaultItem?.frequency === 'once';
-const isLocked = !isOnce && (now < windowStart || now > windowEnd);
+    await navigator.clipboard.writeText(content);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000); // Reset icon after 2s
+}
 
 function displayContent() {
   const isImage = vaultItem?.type === 'image' && content;
   if (error) return <p className="text-red-400 text-sm">{error}</p>;
 
   return (
-    <>
+    <div className="space-y-4">
       {isLocked ? (
-        <p className="text-gray-300 font-mono">
-          {`Your vault will unlock at ${windowStart}`} 
-        </p>
-      ) : isImage ? (
-        <img src={content} alt="Decrypted" className="rounded-lg max-h-64 mx-auto" />
+        <div className="bg-gray-800/50 p-6 rounded-xl border border-gray-700 
+        text-center">
+          <p className="text-gray-400 text-sm uppercase tracking-widest
+           mb-2">Vault Locked</p>
+          <div className="text-3xl font-mono font-bold text-yellow-500 mb-4">
+            {timeUntilChange}
+          </div>
+          <p className="text-gray-500 text-xs">
+            Unlocks at: {windowStart.toLocaleString([], { 
+              month: 'short', 
+              day: 'numeric', 
+              hour: '2-digit', 
+              minute: '2-digit' 
+            })}
+          </p>
+        </div>
       ) : (
-        <p className="text-gray-300 font-mono break-all">
-          {content || "Decrypting..."}
-        </p>
+        <div className="relative group">
+          {isImage ? (
+            <img src={content} alt="Decrypted" className="rounded-lg max-h-64 mx-auto" />
+          ) : (
+            <div className="bg-gray-900 p-4 rounded-lg border border-gray-700">
+               <p className="text-gray-300 font-mono break-all pr-10">
+                {content || "Decrypting..."}
+              </p>
+            </div>
+          )}
+
+          {!isImage && content && (
+            <button
+              onClick={handleCopy}
+              className="absolute top-2 right-2 p-2 rounded-md bg-gray-800 
+              hover:bg-gray-700 transition-colors border border-gray-600"
+              title="Copy to clipboard"
+            >
+              {copied ? (
+                <Check size={16} className="text-green-400" />
+              ) : (
+                <Copy size={16} className="text-gray-400" />
+              )}
+            </button>
+          )}
+        </div>
       )}
-    </>
+    </div>
   );
+     
 }
   return (
     <div 
