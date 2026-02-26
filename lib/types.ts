@@ -64,3 +64,7 @@ export type VaultContextType = VaultState & VaultActions;
    type: 'note' | 'password' | 'image'
    frequency:string
  }
+ export interface VaultCardProps { 
+  vaultItem: VaultEntry | null;
+   onClick?: () => void; 
+  }
