@@ -6,73 +6,86 @@ import { decryptWithKey } from "@/lib/crypto";
 import { createClient } from "@/lib/supabase/SupabaseClient";
 import UpdateModal from "./updateModal";
 import { useVaultTimer } from "@/lib/hooks/vaultTimerLogic";
-import { Copy,Check } from "lucide-react";
-
+import { Copy, Check,  Edit3 } from "lucide-react";
 
 export default function VaultView({ vaultItem, setVaultOpen }: { 
   vaultItem: VaultEntry | null; 
   setVaultOpen: (open: boolean) => void 
 }) {
   const [content, setContent] = useState<string | null>(null)
-  const { withDecrypted, error,setError ,clearError,isUnlocked} = useVaultCtx()
-  const [updateOpen,setUpdateOpen] = useState<boolean>(false)
+  const [updateOpen, setUpdateOpen] = useState<boolean>(false)
   const [copied, setCopied] = useState(false)
+  const [localError, setLocalError] = useState<string | null>(null)
   
+  const { withDecrypted, error: globalError, isUnlocked } = useVaultCtx()
+  const { isTimeLocked, windowStart, timeUntilChange } = useVaultTimer(vaultItem)
   const supabase = createClient()
 
-  const {isTimeLocked,  windowStart, timeUntilChange} = useVaultTimer(vaultItem)
-  
   useEffect(() => {
-    if (!vaultItem) return;
+    if (localError) {
+      const timer = setTimeout(() => setLocalError(null), 3000);
+      return () => clearTimeout(timer); 
+    }
+  }, [localError]);
+
+  useEffect(() => {
+    if (!vaultItem || isTimeLocked) return;
+
     const handleDecrypt = async () => {
       const result = await withDecrypted(async (key) => {
         return await decryptWithKey(vaultItem.encrypted_content, vaultItem.encryption_iv, key);
       });
-      setContent(result)
+      setContent(result);
     };
 
     handleDecrypt();
-  }, [vaultItem, withDecrypted]);
+  }, [vaultItem, withDecrypted, isTimeLocked]);
 
+  const checkPermissions = () => {
+    if (!isUnlocked) {
+      setLocalError("Session locked. Please unlock the vault first.");
+      return false;
+    }
+    if (isTimeLocked) {
+      setLocalError("Access denied. Item is currently time-locked.");
+      return false;
+    }
+    return true;
+  };
 
-const handleDelete = async () => {
-  if(isTimeLocked || !isUnlocked) {
-    setError('you can not delete your vault while it is unlocked')
-    setTimeout(() => clearError(), 2000);
-    return
-  } ;
-  const confirmDelete = confirm("Are you sure? This cannot be undone.");
-  if (!confirmDelete) return;
+  const handleDelete = async () => {
+    if (!checkPermissions()) return;
 
-  const { error } = await supabase
-    .from('vault_items')
-    .delete()
-    .eq('id', vaultItem?.id);
+    if (!confirm("Are you sure? This action is permanent.")) return;
 
-  if (error) {
-    setError(error.message)
-    setTimeout(() => clearError(), 2000);
-  } 
-  else {
-    alert('vault deleted successfully')
-    window.location.reload();
-    setVaultOpen(true);
-  }  
-};
+    const { error } = await supabase
+      .from('vault_items')
+      .delete()
+      .eq('id', vaultItem?.id);
 
-const handleCopy = async () => {
-  if (!content) return;
+    if (error) {
+      setLocalError(error.message);
+    } else {
+      setVaultOpen(true); 
+      window.location.reload(); 
+    }
+  };
+
+  const handleCopy = async () => {
+    if (!content) return;
 
     await navigator.clipboard.writeText(content);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000); 
 }
 
-function displayContent() {
-  const isImage = vaultItem?.type === 'image' && content;
-  if (error) return <p className="text-red-400 text-sm">{error}</p>;
+  function displayContent() {
+    const isImage = vaultItem?.type === 'image' && content;
+    const activeError = localError || globalError;
 
-  return (
+    if (activeError) return <p className="text-red-400 text-sm font-medium">{activeError}</p>;
+
+      return (
     <div className="space-y-4">
       {isTimeLocked ? (
         <div className="bg-gray-800/50 p-6 rounded-xl border border-gray-700 
@@ -92,37 +105,38 @@ function displayContent() {
           </p>
         </div>
       ) : (
-        <div className="relative group">
-          {isImage ? (
+      <div className="relative group">
+        {isImage ? (
             <img src={content} alt="Decrypted" className="rounded-lg max-h-64 mx-auto" />
-          ) : (
+        ) : (
             <div className="bg-gray-900 p-4 rounded-lg border border-gray-700">
                <p className="text-gray-300 font-mono break-all pr-10">
                 {content || "Decrypting..."}
-              </p>
+          </p>
             </div>
-          )}
+        )}
 
-          {!isImage && content && (
-            <button
-              onClick={handleCopy}
+        {content && (
+          <button
+            onClick={handleCopy}
               className="absolute top-2 right-2 p-2 rounded-md bg-gray-800 
               hover:bg-gray-700 transition-colors border border-gray-600"
               title="Copy to clipboard"
-            >
+          >
               {copied ? (
                 <Check size={16} className="text-green-400" />
               ) : (
                 <Copy size={16} className="text-gray-400" />
               )}
-            </button>
+          </button>
           )}
         </div>
-      )}
-    </div>
-  );
-     
-}
+        )}
+      </div>
+    );
+  }
+
+
   return (
     <div 
      className="max-w-xl mx-auto p-6 bg-gray-900 rounded-2xl border border-gray-800">
@@ -134,13 +148,15 @@ function displayContent() {
       </div>
 
       <div className="bg-black/20 p-4 rounded-lg border border-gray-800 min-h-[100px]">
-      {displayContent()}
+        {displayContent()}
       </div>
 
-      <div className="mt-6 flex gap-4">
-        <button  onClick={() =>setUpdateOpen(true)}
-        className="flex-1 bg-teal-400 text-black py-2 rounded-lg font-bold">
-          Update
+      <div className="mt-8 flex gap-3">
+        <button 
+          onClick={() => checkPermissions() && setUpdateOpen(true)}
+          className="flex-1 bg-teal-500 hover:bg-teal-400 text-black py-2.5 rounded-xl font-bold transition-all flex items-center justify-center gap-2"
+        >
+          <Edit3 size={18} /> Update
         </button>
      
         <button onClick={handleDelete} className="flex-1 border border-red-500/50 text-red-500 py-2 rounded-lg">
