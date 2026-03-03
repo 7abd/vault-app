@@ -16,15 +16,11 @@ export default function UpdateModal({vaultItem,initialContent,setUpdateOpen,isTi
         
         const { withDecrypted, setError, error,isUnlocked,clearError} = useVaultCtx()
         const supabase = createClient()
-
+      
         const handleUpdate = async (e: React.FormEvent) => {
             e.preventDefault();
        if(!vaultItem || !updatedContent) return
-      if (isTimeLocked || !isUnlocked) {
-        setError('You cannot update your vault now, please wait until it is unlocked.')
-        setTimeout(() => clearError(), 2000);
-        return
-      }
+       if (isTimeLocked || !isUnlocked) return;
        setIsUpdating(true)
        try {
 
@@ -72,7 +68,7 @@ export default function UpdateModal({vaultItem,initialContent,setUpdateOpen,isTi
           <h3 className="text-white font-bold text-lg">Update {vaultItem?.type}</h3>
           
        {(error) ? ( <p className="text-red-400 text-sm"> {error} </p> )
-      :(vaultItem?.type !== 'image' ? (
+          :(vaultItem?.type !== 'image' ? (
             <textarea
               value={updatedContent || ''}
               onChange={(e) => setUpdatedContent(e.target.value)}
@@ -100,8 +96,6 @@ export default function UpdateModal({vaultItem,initialContent,setUpdateOpen,isTi
             </button>
           </div>
         </form>
-        {error && (
-          <p className="text-red-400 text-sm animate-pulse">{error}</p>)}
       </div>
     )
 }
