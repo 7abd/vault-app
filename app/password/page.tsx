@@ -1,26 +1,29 @@
 'use client'
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { useVaultCtx } from "@/lib/vaultContext"
+import { useVaultCtx } from "@/lib/context/vaultContext"
 import Link from "next/link"
+
+
 export default function UnlockVaultModal() {
 
   const router = useRouter()
-  const [password, setPassword] = useState<string>("")
+  const [password, setPassword] = useState<string>("abdo.1234")
+  const [isClicked,setIsClicked] = useState<boolean>(false)
   const {error,isLoading,unlockVault,isUnlocked,lockVault} = useVaultCtx()
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     await unlockVault(password);
-
+    setIsClicked(true)
   }
   
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div 
-        className="absolute inset-0 bg-black/60  backdrop-blur-md" 
+        className="absolute inset-0   backdrop-blur-md" 
       />
 
-      <div className="relative bg-gray-900 border border-gray-800 p-8
+      <div className="relative  border border-gray-800 p-8
        rounded-2xl w-full max-w-sm shadow-2xl">
         {!isUnlocked? (
           <>
@@ -32,13 +35,13 @@ export default function UnlockVaultModal() {
                   placeholder="Enter vault password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full bg-gray-800 p-3 rounded-lg border 
+                  className="w-full p-3 rounded-lg border 
                   border-gray-700 text-white outline-none focus:border-teal-400 
                   transition-colors"
                 />
 
                 <p className="text-red-400 text-sm">
-                  {error}</p>
+                  {isClicked && error}</p>
 
                 <div className="flex gap-3 mt-6">
                   <button
