@@ -18,7 +18,6 @@ export default function SideBar() {
     const supabase = createClient();
     const router = useRouter();
     const pathname = usePathname();
-
     const handleSignOut = async () => {
         await supabase.auth.signOut();
         router.push('/sign');
@@ -26,12 +25,12 @@ export default function SideBar() {
 
     const linkStyle = (path: string) => `
         flex items-center p-3 rounded-lg font-medium transition duration-150 group
-        ${pathname === path ? 'bg-teal-600/20 text-white' : 'text-gray-300 hover:bg-gray-800'}
+        ${pathname === path ? 'bg-teal-600/20 text-teal/500' : 'text-foreground/70 hover:bg-foregound/5 hover:text-foreground'}
     `;
 
     return (
-        <nav className="fixed top-0 left-0 h-screen w-64 bg-gray-900 border-r 
-        border-gray-800 p-6 flex flex-col justify-between z-30">
+        <nav className="fixed top-0 left-0 h-screen w-64 bg-sidebar border-r 
+        border-foreground/10 p-6 flex flex-col justify-between z-30 transition-colors duration-300">
             <div>
                 <div className="text-3xl font-extrabold mb-10">
                     <span className="bg-clip-text text-transparent bg-gradient-to-r from-teal-400 to-cyan-500">
@@ -57,16 +56,16 @@ export default function SideBar() {
                     <li>
                         <Link href="/password" className={linkStyle('/password')}>
                             {isUnlocked ? (
-                                <><Lock className="h-5 w-5 mr-3 text-red-400" /> Lock Vault</>
+                                <><Unlock className="h-5 w-5 mr-3 text-teal-400" /> Lock Vault</>
                             ) : (
-                                <><Unlock className="h-5 w-5 mr-3 text-teal-400" /> Unlock Vault</>
+                                <><Lock className="h-5 w-5 mr-3 text-red-400" /> Unlock Vault</>
                             )}
                         </Link>
                     </li>
                 </ul>
             </div>
 
-            <div className="border-t border-gray-800 pt-4">
+            <div className="border-t border-foreground/10  pt-4">
                 <div className="flex items-center space-x-3 p-2">
                     <div className="h-10 w-10 shrink-0 rounded-full bg-teal-600 flex items-center 
                     justify-center font-semibold text-white">
@@ -81,7 +80,7 @@ export default function SideBar() {
                         {session ? (
                            <button
                            onClick={handleSignOut}
-                           className="flex items-center text-xs text-gray-500 hover:text-red-400 transition-colors cursor-pointer"
+                           className="flex items-center text-xs text-foreground/50 hover:text-red-400 transition-colors cursor-pointer"
                        >
                            <LogOut className="h-3 w-3 mr-1" />
                            Sign Out
