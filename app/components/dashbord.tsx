@@ -27,15 +27,13 @@ const vaultCards = vaultItems?.map((item) => {
 
 
   return (
-    <div className="flex min-h-screen bg-[#0a0a0c] text-white font-sans">
-      
-    
+    <div className="flex min-h-screen bg-background text-foreground font-sans transition-colors duration-300">
 
       <main className="flex-1 p-10 overflow-y-auto">
         
         <header className="flex justify-between items-center mb-10">
           <div>
-            <h1 className="text-2xl font-semibold text-gray-200">Vault Dashboard</h1>
+            <h1 className="text-2xl font-semibold">Vault Dashboard</h1>
             <div className="mt-4">
       <button 
         onClick={() => setIsOpen(true)}
@@ -48,9 +46,10 @@ const vaultCards = vaultItems?.map((item) => {
       
     </div>
      </div>
-         <div className="flex items-center gap-3 bg-gray-800/30 px-4 py-2 rounded-full border border-gray-700/50">
-            <span className="text-coral-400 text-lg">🔒</span>
-            <span className="text-sm text-gray-400">Hi, <span className="text-teal-400 font-medium">{user?.full_name.split(" ")[0] || "Username"}</span></span>
+     <div className="flex items-center gap-3 bg-sidebar/50 px-4 py-2 rounded-full border border-foreground/10">
+ 
+            <span className=" text-lg">🔒</span>
+            <span className="text-sm font-bold opacity-70">Hi, <span className="text-teal-400 font-medium">{user?.full_name.split(" ")[0] || "Username"}</span></span>
  
           </div>
         </header>

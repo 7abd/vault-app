@@ -7,43 +7,48 @@ export default function VaultCard({ vaultItem, onClick }: VaultCardProps) {
     return (
       <div 
       onClick={onClick}
-      className="relative group overflow-hidden rounded-3xl aspect-[4/5] 
-      bg-gradient-to-b from-gray-800/40 to-gray-900/40 border border-white/5 p-6 flex 
-      flex-col items-center justify-center text-center transition-transform hover:scale-[1.02] 
-      cursor-pointer shadow-2xl">
+      className="relative group overflow-hidden rounded-3xl aspect-4/5 
+      bg-sidebar border border-foreground/5 p-6 flex 
+      flex-col items-center justify-center text-center transition-all duration-300 hover:scale-[1.02] 
+      hover:border-teal-500/30 cursor-pointer shadow-xl">
         
        
-  
-        <div className='mb-6 text-6xl drop-shadow-[0_0_8px_rgba(25,113,133,0.4)]'>
+        <div className="absolute top-4 left-0 right-0 flex justify-center">
         {isOnce ? (
-            <span className="bg-teal-500/20 text-teal-400 text-[9px] font-bold px-2 py-1 
-            rounded-md border border-teal-500/30 tracking-widest uppercase">
+            <span className="bg-teal-500/20 text-teal-400 border-teal-500/30
+            in-[.light]:bg-teal-500/10 in-[.light]:text-teal-600 in-[.light]:border-teal-500/20
+            text-[9px] font-bold px-2 py-1 rounded-md border tracking-widest uppercase"
+          >
               Permanent
             </span>
-          ) : isActive && !isTimeLocked ? (
-            <span className="bg-green-500/20 text-green-400 text-[9px] font-bold px-2 py-1 
-            rounded-md border border-green-500/30 tracking-widest uppercase animate-pulse">
-              Live Now
-            </span>
+              ) : isActive && !isTimeLocked ? (
+        <span className="bg-green-500/20 text-green-400 border-green-500/30
+          in-[.light]:bg-green-500/10 in-[.light]:text-green-600 in-[.light]:border-green-500/20
+          text-[9px] font-bold px-2 py-1 rounded-md border tracking-widest uppercase animate-pulse"
+        >
+          Live Now
+        </span>
           ) : null}
-          
+          </div>
+        <div className="mb-4 flex flex-col items-center">
+
           {isTimeLocked ?(
-            <div className="mb-6 text-6xl drop-shadow-[0_0_15px_rgba(251,113,133,0.4)]">
-              <span className="text-[#fb7185]">🔒</span>
+            <div className="text-6xl drop-shadow-[0_0_15px_rgba(251,113,133,0.4)]">
+              <span className="grayscale-[0.5] group-hover:grayscale-0 transition-all">🔒</span>
             </div>
           ) :  (
-            <span className="text-6xl mb-4 drop-shadow-[0_0_15px_rgba(45,212,191,0.3)]">{isOnce ? '📦' : '🔓'}</span>
+            <span className="text-6xl drop-shadow-[0_0_15px_rgba(45,212,191,0.3)]">{isOnce ? '📦' : '🔓'}</span>
           )}
   
           {isActive && (
              <div className="absolute top-4 right-4 w-6 h-6 bg-teal-500
-              rounded-full flex items-center justify-center border-2 border-[#0a0a0c]">
-               <span className="text-[10px] text-white">✓</span>
+              rounded-full flex items-center justify-center border-2 border-background shadow-lg">
+               <span className="text-[10px] text-white font-bold">✓</span>
              </div>
           )}
   
-          <h3 className="text-sm font-semibold text-gray-200 mt-2">{vaultItem?.title}</h3>
-          <p className="text-[10px] text-gray-500 mt-2 uppercase">{isOnce ? "Always Available" : 
+          <h3 className="text-sm font-semibold text-foreground mt-2">{vaultItem?.title}</h3>
+          <p className="text-[10px] text-foreground-50 mt-2 uppercase tracking-tight">{isOnce ? "Always Available" : 
           isTimeLocked ? `Next: ${windowStart.toLocaleString()}` : `${vaultItem?.frequency} Window`}</p>
         </div>
       </div>
