@@ -6,7 +6,7 @@ import { decryptWithKey } from "@/lib/crypto";
 import { createClient } from "@/lib/supabase/SupabaseClient";
 import UpdateModal from "./updateModal";
 import { useVaultTimer } from "@/lib/hooks/vaultTimerLogic";
-import { Copy, Check,  Edit3 } from "lucide-react";
+import { Copy, Check,  Edit3,X } from "lucide-react";
 
 export default function VaultView({ vaultItem, setVaultOpen }: { 
   vaultItem: VaultEntry | null; 
@@ -88,14 +88,14 @@ export default function VaultView({ vaultItem, setVaultOpen }: {
       return (
     <div className="space-y-4">
       {isTimeLocked ? (
-        <div className="bg-gray-800/50 p-6 rounded-xl border border-gray-700 
+        <div className="bg-foreground/5 p-6 rounded-xl border border-foreground/10
         text-center">
-          <p className="text-gray-400 text-sm uppercase tracking-widest
+          <p className="text-foreground/40 text-sm uppercase font-bold tracking-widest
            mb-2">Vault Locked</p>
-          <div className="text-3xl font-mono font-bold text-yellow-500 mb-4">
+          <div className="text-3xl font-mono font-black text-yellow-500 mb-4 tracking-tight">
             {timeUntilChange}
           </div>
-          <p className="text-gray-500 text-xs">
+          <p className="text-foreground/30 text-xs">
             Unlocks at: {windowStart.toLocaleString([], { 
               month: 'short', 
               day: 'numeric', 
@@ -109,8 +109,8 @@ export default function VaultView({ vaultItem, setVaultOpen }: {
         {isImage ? (
             <img src={content} alt="Decrypted" className="rounded-lg max-h-64 mx-auto" />
         ) : (
-            <div className="bg-gray-900 p-4 rounded-lg border border-gray-700">
-               <p className="text-gray-300 font-mono break-all pr-10">
+            <div className="bg-background/10 p-4 rounded-lg border border-foreground/10 shadow-inner">
+               <p className="text-foreground/90 font-mono break-all pr-10 leading-relaxed">
                 {content || "Decrypting..."}
           </p>
             </div>
@@ -119,8 +119,8 @@ export default function VaultView({ vaultItem, setVaultOpen }: {
         {content && (
           <button
             onClick={handleCopy}
-              className="absolute top-2 right-2 p-2 rounded-md bg-gray-800 
-              hover:bg-gray-700 transition-colors border border-gray-600"
+              className="absolute top-2 right-2 p-2 rounded-md bg-foreground/5
+              hover:bg-gray-700 transition-all border border-foreground/10 active:scale-90"
               title="Copy to clipboard"
           >
               {copied ? (
@@ -139,15 +139,17 @@ export default function VaultView({ vaultItem, setVaultOpen }: {
 
   return (
     <div 
-     className="max-w-xl mx-auto p-6 bg-gray-900 rounded-2xl border border-gray-800">
+     className="max-w-xl mx-auto p-6 bg-sidebar rounded-2xl border border-foreground/5 shadow-2xl transition-all duration-300">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-bold text-white">{vaultItem?.title || 'Vault Item'}</h2>
-        <button onClick={() => setVaultOpen(true)} className="text-gray-400 hover:text-white">
-          Close
+        <h2 className="text-xl font-black text-foreground tracking-tight">{vaultItem?.title || 'Vault Item'}</h2>
+        <button onClick={() => setVaultOpen(true)}  className="p-2 rounded-full hover:bg-foreground/5 text-foreground/40
+           hover:text-foreground transition-all">
+          <X size={24} />
+          
         </button>
       </div>
 
-      <div className="bg-black/20 p-4 rounded-lg border border-gray-800 min-h-[100px]">
+      <div className="bg-background/40 p-1 rounded-2xl">
         {displayContent()}
       </div>
 
@@ -159,7 +161,9 @@ export default function VaultView({ vaultItem, setVaultOpen }: {
           <Edit3 size={18} /> Update
         </button>
      
-        <button onClick={handleDelete} className="flex-1 border border-red-500/50 text-red-500 py-2 rounded-lg">
+        <button onClick={handleDelete}         
+         className="flex-1 border border-red-500/20 text-red-500/70
+           hover:text-red-500 hover:bg-red-500/5 py-3.5 rounded-2xl text-sm font-semibold transition-all">
           Delete
         </button>
       </div>

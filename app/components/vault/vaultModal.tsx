@@ -82,39 +82,40 @@ export default function VaultModal({ isOpen, setIsOpen }:
             <div className="fixed inset-0 z-50 flex items-center justify-center">
               
               <div 
-                className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+                className="absolute inset-0 bg-background/60 backdrop-blur-sm"
                 onClick={() => setIsOpen(false)} 
               />
     
-              <div className="relative bg-gray-900 border border-gray-800 p-8 rounded-2xl w-full max-w-md shadow-2xl">
-                <h2 className="text-xl font-bold mb-4">New Secret Capsule</h2>
+              <div className="relative bg-sidebar border border-foreground/10 p-8 rounded-2xl w-full max-w-md shadow-2xl  transition-all duration-300 max-h-[90vh] overflow-y-auto">
+                <h2 className="text-xl font-bold mb-4 text-foreground">New Secret Capsule</h2>
                 
                 <form onSubmit={handleSubmit} className="space-y-4">
 
                   <input 
                   name="title"
+                  required
                   onChange={handleChange}
                   value={content.title}
                     type="text" 
                     placeholder="Title (e.g. My Ledger Key)" 
-                    className="w-full bg-gray-800 p-3 rounded-lg border border-gray-700 outline-none focus:border-teal-400"
-                  />
+                    className="w-full bg-background p-3 rounded-xl border border-foreground/10 text-foreground outline-none focus:border-teal-400 transition-all"
+                    />
                    <select
                     name="type"
                     value={content.type}
                     onChange={handleChange}
-                    className="w-full bg-gray-800 p-3 rounded-lg border border-gray-700 outline-none focus:border-teal-400"
+                     className="w-full bg-background p-3 rounded-xl border border-foreground/10 text-foreground outline-none focus:border-teal-400 transition-all cursor-pointer"
                   >
                     <option value="note">Note</option>
                     <option value="password">Password</option>
                     <option value="image">Image</option>
                   </select>
-                  <p className="text-[10px] text-gray-600 px-1">
+                  <p className="text-[10px] text-foreground/40 italic px-1">
                     Categorizes your secret to optimize how it is displayed and handled.
                   </p>    
                 <select 
-                  className="w-full bg-gray-800/50 border border-gray-700 text-gray-300 p-3.5 
-                  rounded-xl appearance-none outline-none focus:border-teal-400/50 transition-all 
+                  className="w-full bg-background border border-foreground/10 text-foreground p-3.5 
+                  rounded-xl  outline-none focus:border-teal-400/50 transition-all 
                   cursor-pointer text-sm font-medium"
                   name="frequency"
                   onChange={handleChange}
@@ -135,7 +136,7 @@ export default function VaultModal({ isOpen, setIsOpen }:
                 
                
 
-                  <p className="text-[10px] text-gray-600 px-1">
+                  <p className="text-[10px] text-foreground/40 italic px-1">
                     Controls how long the vault stays cooling down after use.
                   </p>
 
@@ -146,43 +147,49 @@ export default function VaultModal({ isOpen, setIsOpen }:
                       value={content.duration}
                       onChange={handleChange}
                       placeholder="Lock duration (minutes)"
-                      className="w-full bg-gray-800 p-3 rounded-lg border border-gray-700 outline-none focus:border-teal-400"
+                      className="w-full bg-background p-3 rounded-lg border border-foreground/10 text-foreground transition-all outline-none focus:border-teal-400"
                         />
-                        <p className="text-[10px] text-gray-600 px-1">
+                        <p className="text-[10px] text-foreground/40 italic px-1">
                           Sets the "Access Window"—how many minutes the vault stays open before auto-locking.
-                        </p>
-          {content.type !== 'image' && 
-                  <textarea 
-                  name="secretMsg"
-                  value={content.secretMsg}
-                  onChange={handleChange}
-            
-                    placeholder="The Secret Content..." 
-                    className="w-full bg-gray-800 p-3 rounded-lg border border-gray-700 h-32 outline-none focus:border-teal-400"
-                  />
-              }
-          {content.type === "image" && (
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleImageChange}
-            className="w-full bg-gray-800 p-3 rounded-lg border border-gray-700"
-          />
-        )}
-     {error && (
-          <div className="p-3 mb-4 rounded bg-red-500/10 border border-red-500 text-red-500 text-sm text-center">
-            {error}
-          </div>
+                                            </p>
+                              {content.type !== 'image' && 
+                                      <textarea 
+                                      name="secretMsg"
+                                      required
+                                      value={content.secretMsg}
+                                      onChange={handleChange}
+                                
+                                        placeholder="The Secret Content..." 
+                                        className="w-full bg-background p-3 rounded-xl border border-foreground/10 text-foreground h-32 outline-none focus:border-teal-400 transition-all resize-none"
+                                        />
+                                  }
+                              {content.type === "image" && (
+                              <input
+                                type="file"
+                                accept="image/*"
+                                required
+                                onChange={handleImageChange}
+                                className="w-full bg-background p-3 rounded-xl border border-foreground/10 text-foreground text-sm file:mr-4 file:py-1 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-teal-400/10 file:text-teal-500 hover:file:bg-teal-400/20 transition-all"
+                                />
+                            )}
+                        {error && (
+                              <div className="p-3 mb-4 rounded bg-red-500/10 border border-red-500 text-red-500 text-sm text-center font-medium">
+                                {error}
+                              </div>
         )}
                 <div className="mt-6 flex gap-3">
                   <button 
                     onClick={() => setIsOpen(false)}
-                    className="flex-1 bg-gray-800 py-3 rounded-xl hover:bg-gray-700"
-                  >
+                    className="flex-1 bg-foreground/5 text-foreground py-3 rounded-xl hover:bg-foreground/10 transition-colors font-medium"
+                    >
                     Cancel
                   </button>
-                  <button type="submit"  className="flex-1 bg-teal-400 text-black py-3 rounded-xl font-bold">
-                  {isSaving ? "Saving..." : "Save"}
+                  <button 
+                    type="submit" 
+                    disabled={isSaving}
+                    className="flex-1 bg-teal-400 text-black py-3 rounded-xl font-bold hover:bg-teal-300 transition-all shadow-lg shadow-teal-400/20 disabled:opacity-50"
+              >
+                  {(isSaving && !error) ? "Saving..." : "Save"}
 
                   </button>
                 </div>

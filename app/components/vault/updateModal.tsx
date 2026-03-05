@@ -63,34 +63,43 @@ export default function UpdateModal({vaultItem,initialContent,setUpdateOpen,isTi
     }
 
     return(    
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-        <form onSubmit={handleUpdate} className="bg-gray-900 p-6 rounded-2xl border border-gray-800 w-full max-w-md space-y-4">
-          <h3 className="text-white font-bold text-lg">Update {vaultItem?.type}</h3>
+    <div className="fixed inset-0 bg-background/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+        <form onSubmit={handleUpdate} className="bg-sidebar p-6 rounded-2xl border border-foreground/10 w-full max-w-md space-y-4 shadow-2xl transition-all duration-300">
+          <h3 className="text-foreground font-black text-xl tracking-tight">Update {vaultItem?.type}</h3>
           
        {(error) ? ( <p className="text-red-400 text-sm"> {error} </p> )
           :(vaultItem?.type !== 'image' ? (
             <textarea
               value={updatedContent || ''}
               onChange={(e) => setUpdatedContent(e.target.value)}
-              className="w-full bg-gray-800 p-3 rounded-lg border border-gray-700 h-32 text-white outline-none focus:border-teal-400"
-            />
+              className="w-full bg-background p-4 rounded-2xl border 
+              border-foreground/10 h-40 text-foreground outline-none focus:border-teal-400 transition-all
+               resize-none font-mono text-sm shadow-inner"    />
           ) : (
             <input
               type="file"
               accept="image/*"
               onChange={handleImageChange}
-              className="w-full bg-gray-800 p-3 rounded-lg border border-gray-700 text-gray-400"
+               className="w-full bg-background p-3 rounded-2xl border 
+                     border-foreground/10 text-foreground/60 text-sm file:mr-4 file:py-1 
+                     file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold
+                   file:bg-teal-400/10 file:text-teal-500
+                   hover:file:bg-teal-400/20 transition-all cursor-pointer"
             />
           ))}
   
           <div className="flex gap-3">
-            <button type="button" onClick={() => setUpdateOpen(false)} className="flex-1 bg-gray-800 text-white py-3 rounded-xl">
+            <button type="button" onClick={() => setUpdateOpen(false)}  
+             className="flex-1 bg-foreground/5 text-foreground/70 py-3.5 rounded-2xl 
+                font-semibold hover:bg-foreground/10 transition-colors">
               Cancel
             </button>
             <button 
               type="submit" 
               disabled={isTimeLocked || isUpdating }
-              className="flex-1 bg-teal-400 text-black py-3 rounded-xl font-bold disabled:opacity-50"
+             className="flex-1 bg-teal-400 text-black py-3.5 rounded-2xl font-bold
+               hover:bg-teal-300 transition-all shadow-lg shadow-teal-400/20 
+               disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]"
             >
               {isUpdating ? "Saving..." : "Save Changes"}
             </button>
