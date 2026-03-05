@@ -2,6 +2,7 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { useVaultCtx } from "@/lib/context/vaultContext"
+import { useAuth } from "@/lib/context/authContext"
 import Link from "next/link"
 
 
@@ -11,8 +12,15 @@ export default function UnlockVaultModal() {
   const [password, setPassword] = useState<string>("abdo.1234")
   const [isClicked,setIsClicked] = useState<boolean>(false)
   const {error,isLoading,unlockVault,isUnlocked,lockVault} = useVaultCtx()
+  const {session} = useAuth()
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+
+    if (!session) {
+      router.push('/sign');
+      return;
+    }
+    
     await unlockVault(password);
     setIsClicked(true)
   }
@@ -20,14 +28,14 @@ export default function UnlockVaultModal() {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div 
-        className="absolute inset-0   backdrop-blur-md" 
+        className="absolute inset-0 bg-background/60  backdrop-blur-md" 
       />
 
-      <div className="relative  border border-gray-800 p-8
-       rounded-2xl w-full max-w-sm shadow-2xl">
+      <div className="relative bg-sidebar border border-foreground/10 p-8
+       rounded-2xl w-full max-w-sm shadow-2xl transition-colors duration-300">
         {!isUnlocked? (
           <>
-          <h2 className="text-xl font-bold mb-4 text-white">Unlock Vault</h2>
+          <h2 className="text-xl font-bold mb-4 text-foreground">Unlock Vault</h2>
 
               <form onSubmit={handleSubmit} className="space-y-4">
                 <input
@@ -35,19 +43,19 @@ export default function UnlockVaultModal() {
                   placeholder="Enter vault password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full p-3 rounded-lg border 
-                  border-gray-700 text-white outline-none focus:border-teal-400 
-                  transition-colors"
+                  className="w-full bg-background p-3 rounded-lg border 
+                  border-foreground/10 text-foreground outline-none focus:border-teal-400 
+                  transition-all placeholder:text-foreground/30"
                 />
 
-                <p className="text-red-400 text-sm">
+                <p className="text-red-400 text-sm font-medium h-5">
                   {isClicked && error}</p>
 
                 <div className="flex gap-3 mt-6">
                   <button
                     type="button"
-                    className="flex-1 bg-gray-800 text-gray-300 py-3
-                    rounded-xl hover:bg-gray-700 transition-colors"
+                    className="flex-1 bg-foreground/5 text-foreground/70 py-3
+                    rounded-xl hover:bg-foreground/10 transition-colors"
                     onClick={() => router.push('/')}
                   >
                     Cancel
@@ -72,31 +80,30 @@ export default function UnlockVaultModal() {
             </svg>
           </div>
           
-          <h2 className="text-2xl font-bold text-white mb-2">Vault Unlocked</h2>
-          <p className="text-gray-400 mb-8">You now have access to your secure files.</p>
+          <h2 className="text-2xl font-bold text-foreground mb-2">Vault Unlocked</h2>
+          <p className="text-foreground/50 mb-8">You now have access to your secure files.</p>
           
           <div className="flex gap-3 mt-4">
             <button
              onClick={() => router.back()}
               type="button"
-              className="flex-1 bg-gray-800 text-gray-300 py-3 rounded-xl hover:bg-gray-700 transition-colors"
-            >
-              Cancel
+              className="flex-1 bg-foreground/5 text-foreground/70 py-3 rounded-xl hover:bg-foreground/60 transition-colors"            >
+              Back
             </button>
         
             <button
              onClick={() => lockVault()}
               type="button"
-              className="flex-1 bg-red-500/10 text-red-500 border border-red-500/20 py-3 rounded-xl font-bold hover:bg-red-500 hover:text-white transition-all"
+              className="flex-1 bg-red-500/10 text-red-500 border border-red-500/20 py-3 rounded-xl font-bold hover:bg-red-500 hover:text-white transition-all shadow-red-400/10"
             >
               Lock Vault
             </button>
           </div>
         </div>
         )}
-       <p className="text-gray-400 text-sm text-center mt-4">
+       <p className="text-foreground/40 text-sm text-center mt-4">
           Don&apos;t have a password?{" "}
-          <Link href="/password/setUp" className="text-teal-400">
+          <Link href="/password/setUp" className="text-teal-400 font-semibold hover:underline">
             Create a password
           </Link>
         </p>
