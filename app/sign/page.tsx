@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { useAuth } from "@/lib/context"
+import { useAuth } from "@/lib/context/authContext"
 import { createClient } from "@/lib/supabase/SupabaseClient"
 import { useSearchParams } from "next/navigation"
 
@@ -44,24 +44,25 @@ const signupSuccess = searchParams.get("signup") === "success"
 
   if (authInitializing) {
     return (
-      <main className="flex justify-center items-center min-h-screen bg-gray-950 text-white">
-        <p>Loading...</p>
+      <main className="flex justify-center items-center min-h-screen text-foreground bg-background">
+        <p className="animate-pulse">Loading...</p>
       </main>
     )
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-950 px-4">
-      <div className="w-full max-w-md space-y-8 p-10 rounded-xl shadow-2xl bg-gray-800 border border-teal-500/20">
+    <div className="flex min-h-screen items-center justify-center bg-background px-4 transition-colors duration-300">
+      <div className="w-full max-w-md space-y-8 p-10 rounded-2xl shadow-2xl bg-sidebar  border border-foreground/5 ">
 
-        <h2 className="text-3xl font-extrabold text-white text-center">
+        <h2 className="text-3xl font-extrabold text-foreground text-center">
           Sign in to Your Vault
         </h2>
 
         { signupSuccess && (
-          <p className="bg-green-100 text-green-800 p-3 rounded-md text-center">
+          <p className="bg-green-500/10 text-green-500 p-3 rounded-md text-center border border-green-500/20 text-sm">
+
             ✅ Account created successfully!
-            <span className="block mt-2">Please verify your email</span>
+            <span className="block mt-1 opacity-80">Please verify your email</span>
           </p>
         )}
 
@@ -72,8 +73,8 @@ const signupSuccess = searchParams.get("signup") === "success"
             placeholder="Email address"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full px-3 py-2 rounded-md bg-gray-700/50 text-white border border-gray-700"
-          />
+            className="w-full px-4 py-3 rounded-xl bg-background text-foreground border border-foreground/10 focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none transition-all"
+            />
 
           <input
             type="password"
@@ -81,25 +82,25 @@ const signupSuccess = searchParams.get("signup") === "success"
             placeholder="Master Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full px-3 py-2 rounded-md bg-gray-700/50 text-white border border-gray-700"
-          />
+            className="w-full px-4 py-3 rounded-xl bg-background text-foreground border border-foreground/10 focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none transition-all"
+            />
 
           {errorMsg && (
-            <p className="text-red-500 text-sm">{errorMsg}</p>
+            <p className="text-red-500 text-xs pl-1 font-medium">{errorMsg}</p>
           )}
 
           <button
             type="submit"
             disabled={submitting}
-            className="w-full bg-teal-600 hover:bg-teal-700 text-white rounded-md py-2 disabled:opacity-50"
+            className="w-full bg-teal-600 hover:bg-teal-500 text-white font-bold rounded-xl py-3 shadow-lg shadow-teal-600/20 transition-all active:scale-[0.98] disabled:opacity-50"
           >
             {submitting ? "Signing in..." : "Sign In"}
           </button>
         </form>
 
-        <p className="text-gray-400 text-sm text-center mt-4">
+        <p className="text-forground/50 text-sm text-center mt-6">
           Don&apos;t have an account?{" "}
-          <Link href="/sign/signUp" className="text-teal-400">
+          <Link href="/sign/signUp" className="text-teal-400 font-semibold hover:underline decoration-2 underline-offset-4">
             Create a Secure Vault
           </Link>
         </p>
