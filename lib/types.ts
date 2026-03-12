@@ -1,6 +1,6 @@
 import type { Session } from "@supabase/supabase-js"
 import type React from "react"
-
+import type { Dispatch,SetStateAction } from "react"
 export type User = {
   id: string
   email: string
@@ -32,7 +32,6 @@ export type AuthContextType = {
   authInitializing: boolean
   vaultItems:VaultEntry[] | null
   setVaultItems: React.Dispatch<React.SetStateAction<VaultEntry[] | null>>
-  fetchVaultItems: () => Promise<void>
   
 
 }
@@ -68,3 +67,12 @@ export type VaultContextType = VaultState & VaultActions;
   vaultItem: VaultEntry | null;
    onClick?: () => void; 
   }
+
+  export type SettingsContextType = {
+    isLight: boolean;
+    toggleTheme: () => void;
+    mounted: boolean;
+    lockTimer:number;
+    setLockTimer: Dispatch<SetStateAction<number>> 
+  
+  } 
