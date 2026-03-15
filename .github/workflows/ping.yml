@@ -1,0 +1,27 @@
+name: Keep Supabase Awake
+
+on:
+  schedule:
+    - cron: "0 9 * * *"   
+  workflow_dispatch:       
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+          check-latest: true
+
+      - name: Install dependencies
+        run: npm install node-fetch@3
+
+      - name: Ping Supabase
+        run: node ping.js
+        env:
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
