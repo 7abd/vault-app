@@ -1,8 +1,7 @@
 import { useEffect, useRef } from "react";
 
 export const useInactivityTimer = (onTimeout: () => void, durationMinutes: number) => {
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
-
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => {
   const resetTimer = () => {
     if (timerRef.current) clearTimeout(timerRef.current);

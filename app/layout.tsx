@@ -4,24 +4,27 @@ import "./globals.css";
 import SideBar from "./components/sideBar";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/solid";
 import React from "react";
-import { AuthProvider } from "@/lib/context";
-import { VaultProvider } from "@/lib/vaultContext";
+import { AuthProvider } from "@/lib/context/authContext";
+import { VaultProvider } from "@/lib/context/vaultContext";
+import { SettingsProvider } from "@/lib/context/settingsContext";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const [mobileOpen, setMobileOpen] = React.useState(false);
-
   return (
-    <html lang="en">
+    <html className="light" lang="en">
       <AuthProvider>
         <VaultProvider>
-      <body className="flex h-screen relative">
+      <SettingsProvider>
 
-        <aside className="hidden sm:block w-64 bg-[#121212]">
+      <body className="flex h-screen bg-background text-foreground relative transition-colors duration-300">
+
+
+        <aside className="hidden sm:block w-64 bg-sidebar border-r  border-gray-800 ">
           <SideBar />
         </aside>
 
         <button
-          className="sm:hidden absolute top-4 left-4 z-30 text-white"
+          className="sm:hidden absolute top-4 left-4 z-30"
           onClick={() => setMobileOpen(true)}
         >
           <Bars3Icon className="w-8 h-8" />
@@ -53,6 +56,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
         <main className="flex-1">{children}</main>
       </body>
+      </SettingsProvider>
       </VaultProvider>
       </AuthProvider>
     </html>
