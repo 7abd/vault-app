@@ -8,7 +8,7 @@ import { useInactivityTimer } from "../hooks/useInactivityTimer";
 const settingsContext = createContext< SettingsContextType | undefined>(undefined);
 
 export function SettingsProvider({ children }: { children: React.ReactNode }) {
-  const [isLight, setIsLight] = useState<boolean>(false);
+  const [isLight, setIsLight] = useState<boolean>(true);
   const [mounted, setMounted] = useState(false);
   const [lockTimer ,setLockTimer] = useState<number>(5)
   const {lockVault} = useVaultCtx();
