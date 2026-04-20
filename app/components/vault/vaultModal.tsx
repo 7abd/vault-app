@@ -75,7 +75,7 @@ export default function VaultModal({ isOpen, setIsOpen }:
         setContent({title:'' , secretMsg:'' , duration:1,type:'note',frequency:'once'})
 
          setError(null)
-         
+         setIsSaving(false)
     }
     return (
         isOpen && (

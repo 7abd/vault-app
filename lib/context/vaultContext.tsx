@@ -12,7 +12,6 @@ import { deriveVerifier,generateSalt, bufferToBase64,deriveCryptoKey } from "@/l
 import { VaultContextType } from "../types";
 
 
-
 const vaultContext = createContext<VaultContextType | undefined>(undefined);
 
 
@@ -107,16 +106,11 @@ export function VaultProvider({children} : {children:ReactNode}) {
       }, []);
     const withDecrypted = useCallback(
         async <T,>(fn: (key: CryptoKey) => Promise<T>): Promise<T | null> => {
-          if (!cryptoKey) {
+          if (!cryptoKey || !isUnlocked) {
             setError("Vault is locked. Please unlock it first.");
             return null;
           }
-    
-          if (!isUnlocked) {
-            setError("Vault is locked. Please unlock it first.");
-            return null;
-          }
-    
+
           try {
             return await fn(cryptoKey);
           } catch (err) {

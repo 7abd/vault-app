@@ -1,4 +1,3 @@
-// hooks/useVaultMigration.ts
 import { useState, useCallback } from "react";
 import { useVaultCtx } from '../context/vaultContext'
 import { createClient } from '../supabase/SupabaseClient'
@@ -14,18 +13,14 @@ export const useVaultMigration = () => {
     setIsMigrating(true);
     try {
       if (isUnlocked) {
-        // PATH A: RE-KEYING
         return await withDecrypted(async (oldKey) => {
-          // 1. Fetch
           const { data: items, error: fetchErr } = await supabase.from("vault_items").select("*");
           if (fetchErr) throw fetchErr;
 
-          // 2. Derive new stuff
           const newSalt = bufferToBase64(generateSalt());
           const newVerifier = await deriveVerifier(newPassword, newSalt);
           const newCryptoKey = await deriveCryptoKey(newPassword, newSalt);
 
-          // 3. Re-encrypt
           const reEncryptedItems = await Promise.all(
             items.map(async (item: VaultEntry) => {
               const plainText = await decryptWithKey(item.encrypted_content, item.encryption_iv, oldKey);
@@ -57,7 +52,6 @@ export const useVaultMigration = () => {
           return true;
         });
       } else {
-        // PATH B: HARD RESET
         const { data: { user } } = await supabase.auth.getUser();
         
         await supabase.from("vault_items").delete().eq("user_id", user?.id);
