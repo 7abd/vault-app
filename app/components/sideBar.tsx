@@ -33,7 +33,7 @@ export default function SideBar() {
         border-foreground/10 p-6 flex flex-col justify-between z-30 transition-colors duration-300">
             <div>
                 <div className="text-3xl font-extrabold mb-10">
-                    <span className="bg-clip-text text-transparent bg-gradient-to-r from-teal-400 to-cyan-500">
+                    <span className="bg-clip-text text-transparent bg-linear-to-r from-teal-400 to-cyan-500">
                         Vault App
                     </span>
                 </div>
@@ -73,7 +73,7 @@ export default function SideBar() {
                     </div>
                     
                     <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-white truncate">
+                        <p className="text-sm font-medium text-foreground truncate">
                             {user?.full_name || 'Guest'}
                         </p>
 
