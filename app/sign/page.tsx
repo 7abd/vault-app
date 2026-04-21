@@ -1,13 +1,13 @@
 "use client"
 
 import Link from "next/link"
-import { useState, useEffect } from "react"
+import { useState, useEffect,Suspense } from "react"
 import { useRouter } from "next/navigation"
 import { useAuth } from "@/lib/context/authContext"
 import { createClient } from "@/lib/supabase/SupabaseClient"
 import { useSearchParams } from "next/navigation"
 
-export default function SignIn() {
+function SignInContent() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
@@ -106,5 +106,14 @@ const signupSuccess = searchParams.get("signup") === "success"
         </p>
       </div>
     </div>
+  )
+}
+
+
+export default function SignIn() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-background" />}>
+      <SignInContent />
+    </Suspense>
   )
 }

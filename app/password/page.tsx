@@ -9,7 +9,7 @@ import Link from "next/link"
 export default function UnlockVaultModal() {
 
   const router = useRouter()
-  const [password, setPassword] = useState<string>("")
+  const [password, setPassword] = useState<string>("abdo.1234")
   const [isClicked,setIsClicked] = useState<boolean>(false)
   const {error,isLoading,unlockVault,isUnlocked,lockVault} = useVaultCtx()
   const {session} = useAuth()
