@@ -93,7 +93,8 @@ Feel free to reach out if you have questions or want to connect:
 
 ## Preview
 
-![Vault App Preview](public/vault-preview.png)
+![Vault Preview](https://raw.githubusercontent.com/7abd/vault-app/readme-edits/public/vault-preview.png)
+
 
 ##  Installation & Setup
 
