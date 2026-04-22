@@ -93,7 +93,7 @@ Feel free to reach out if you have questions or want to connect:
 
 ## Preview
 
-![Screenshot](.\public\Screenshot 2026-04-.png)
+![Screenshot](public/Screenshot%202026-04-.png)
 
 ##  Installation & Setup
 
