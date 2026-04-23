@@ -8,6 +8,7 @@ The goal of this project was to explore a **zero-knowledge architecture** using 
 
 ##  Core Idea
 
+
 Most apps store user data in a way that the server can read it.
 
 VaultApp takes a different approach:
@@ -79,7 +80,7 @@ VaultApp takes a different approach:
 
 ---
 
-**Live Demo**: 
+**Live Demo**: [vault-app-gray.vercel.app](https://vault-app-gray.vercel.app)
 ## Contact
 
 Feel free to reach out if you have questions or want to connect:
@@ -92,9 +93,26 @@ Feel free to reach out if you have questions or want to connect:
 
 ## Preview
 
-![Screenshot](.\Screenshot 2026-04-.png)
+![Vault App Preview](public/vault-preview.png)
+
 
 ##  Installation & Setup
+
+```bash
+# Clone this repo
+git clone https://github.com/7abd/vault-app
+
+# Go into the project___
+cd vault-app
+
+# Install dependencies
+npm install
+
+# Run the development server
+npm run dev
+
+
+
 ##  Getting Started
 
 ### 1. Prerequisites
