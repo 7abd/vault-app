@@ -87,9 +87,8 @@ Feel free to reach out if you have questions or want to connect:
 
 - [LinkedIn](https://www.linkedin.com/in/abdennour-darkaoui-2b2873356/)
 - [Email](mailto:abd@darkaoui.org)
-
-
-- My Discord:[discord] (https://discordapp.com/users/1438288673039974531)
+- [Discord](https://discordapp.com/users/1438288673039974531)
+  
 
 ## Preview
 
