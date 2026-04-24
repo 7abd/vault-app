@@ -86,10 +86,10 @@ VaultApp takes a different approach:
 Feel free to reach out if you have questions or want to connect:
 
 - [LinkedIn](https://www.linkedin.com/in/abdennour-darkaoui-2b2873356/)
-- [abd@darkaoui.org](mailto:abd@darkaoui.org)
+- [Email](mailto:abd@darkaoui.org)
 
 
-- My Discord:abdel_07532
+- My Discord:[discord] (https://discordapp.com/users/1438288673039974531)
 
 ## Preview
 
