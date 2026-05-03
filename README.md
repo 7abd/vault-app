@@ -122,11 +122,7 @@ These concepts are used in privacy-focused systems such as secure vaults, passwo
 - Thinking in terms of system design, not just UI
 
 **Live Demo**: [vault-app-gray.vercel.app](https://vault-app-gray.vercel.app)
-## Contact
 
-Feel free to reach out if you have questions or want to connect:
-
-- [LinkedIn](https://www.linkedin.com/in/abdennour-darkaoui-2b2873356/)
 ## Contact
 
 Feel free to reach out if you have questions or want to connect:
