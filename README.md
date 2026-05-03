@@ -127,11 +127,14 @@ These concepts are used in privacy-focused systems such as secure vaults, passwo
 Feel free to reach out if you have questions or want to connect:
 
 - [LinkedIn](https://www.linkedin.com/in/abdennour-darkaoui-2b2873356/)
-- [abd@darkaoui.org](mailto:abd@darkaoui.org)
--[My portfolio] (https://www.darkaoui.org)
+## Contact
 
+Feel free to reach out if you have questions or want to connect:
 
-- My Discord:abdel_07532
+- [LinkedIn](https://www.linkedin.com/in/abdennour-darkaoui-2b2873356/)
+- [Email](mailto:abd@darkaoui.org)
+- [Portfolio](https://www.darkaoui.org)
+- Discord : abdel_07532
 
 ## Preview
 
