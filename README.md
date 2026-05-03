@@ -1,84 +1,125 @@
-# 🛡️ VaultApp
 
-VaultApp is a client-side encrypted vault where all sensitive data is encrypted **in the browser before being stored** in the database.
+# 🛡️ VaultApp — Zero-Knowledge Encrypted Personal Vault
 
-The goal of this project was to explore a **zero-knowledge architecture** using the Web Crypto API and understand the challenges around **key derivation, encryption flows, and data migration**.
+VaultApp is a **zero-knowledge encrypted vault** where all sensitive data is encrypted locally in the browser before being stored in the database. The server never has access to plaintext data or user passwords.
+
+It is designed to explore real-world **client-side cryptography**, secure key management, and privacy-first architecture using modern web technologies.
 
 ---
 
 ##  Core Idea
 
+Unlike traditional applications where user data is stored in readable or server-decryptable form, VaultApp ensures:
 
-Most apps store user data in a way that the server can read it.
+- All data is encrypted **on the client-side**
+- The server only stores **ciphertext**
+- Decryption is only possible on the user’s device
 
-VaultApp takes a different approach:
-
-- Data is encrypted locally using **AES-GCM**
-- The encryption key is derived from the user’s password using **PBKDF2 + salt**
-- Only encrypted data is sent to Supabase
-- The server never has access to the plaintext data or the master password
+This simulates the architecture used in **secure password managers and privacy-focused applications**.
 
 ---
 
 ##  How It Works (Simplified Flow)
 
-1. User enters their master password  
-2. A cryptographic key is derived using PBKDF2 and a unique salt  
-3. Data (notes, passwords, images) is encrypted using AES-GCM in the browser  
-4. Encrypted data is stored in Supabase  
-5. During a session, the key is kept in memory and used to decrypt data when needed  
-6. When the app locks (inactivity or refresh), the key is discarded  
+1. User enters a master password  
+2. A cryptographic key is derived using **PBKDF2 + salt**  
+3. Data is encrypted in the browser using **AES-GCM (Web Crypto API)**  
+4. Only encrypted data is sent and stored in **Supabase**  
+5. On login, data is decrypted locally in memory  
+6. On logout or inactivity, the key is discarded  
 
 ---
 
-##  Key Features
+## Key Features
 
-- **Secure Unlock Flow**  
-  Includes password validation and controlled unlock attempts  
+###  Secure Authentication Flow
+- Master password-based unlock system
+- Password validation and controlled login attempts
 
-- **Vault Migration (Password Change)**  
-  Re-encrypts all stored data with a new key derived from the new password  
+###  Zero-Knowledge Encryption
+- AES-GCM encryption for all sensitive data
+- PBKDF2 key derivation with unique salt per user
+- Server never has access to raw data or keys
 
-- **Auto-Lock System**  
-  Locks the vault after inactivity to prevent unauthorized access  
+###  Secure Password Change (Migration)
+- Re-encrypts all vault data when password is updated
+- Ensures zero data loss during migration
 
-- **Export Data**  
-  Allows users to export decrypted data as JSON  
+###  Auto-Lock System
+- Automatically locks vault after inactivity
+- Clears encryption keys from memory on lock
 
-- **Hard Reset**  
-  Clears all vault data and resets the vault state  
+###  Data Export
+- Export decrypted vault data as JSON
 
-- **Theming**  
-  Light/Dark mode using CSS variables  
+###  Hard Reset
+- Completely wipes all user vault data
 
----
-
-## Challenges & Design Decisions
-
-- **Key Management**  
-  Since keys never leave the client, they must be carefully handled in memory and cleared on lock  
-
-- **Re-encryption Flow**  
-  Changing the master password requires decrypting and re-encrypting every item safely without data loss  
-
-- **Async Operations**  
-  Handling multiple encryption/decryption operations required careful control to avoid partial failures  
-
-- **Security vs UX Tradeoffs**  
-  Features like auto-lock improve security but must be balanced to avoid frustrating the user  
+###  UI / UX
+- Light & Dark mode support using CSS variables
+- Clean and responsive interface
 
 ---
 
-## Tech Stack
+##  Architecture Highlights
 
-- **Framework:** Next.js 16 (App Router + Turbopack)  
-- **Language:** TypeScript  
-- **Styling:** Tailwind CSS 4  
-- **Backend/Auth:** Supabase (`@supabase/ssr`)  
-- **Crypto:** Web Crypto API (AES-GCM, PBKDF2)  
-- **Icons:** Lucide React  
+- Fully client-side encryption model
+- Stateless server design (stores only encrypted blobs)
+- Secure in-memory key handling
+- Separation of encryption logic from UI layer
 
 ---
+
+##  Security & Design Challenges Solved
+
+###  Key Management
+Encryption keys never leave the client and are carefully managed in memory, then destroyed on logout or lock.
+
+###  Re-encryption System
+Password changes require securely decrypting and re-encrypting all stored data without corruption or partial failure.
+
+###  Async Encryption Handling
+Handled multiple encryption/decryption operations safely to avoid race conditions or inconsistent state.
+
+###  Security vs UX Tradeoffs
+Balanced strong security features (auto-lock, session control) with usability to avoid friction in user experience.
+
+---
+
+##  Tech Stack
+
+- **Framework:** Next.js (App Router)
+- **Language:** TypeScript
+- **Styling:** Tailwind CSS
+- **Backend/Auth:** Supabase (@supabase/ssr)
+- **Cryptography:** Web Crypto API  
+  - AES-GCM encryption  
+  - PBKDF2 key derivation
+- **Icons:** Lucide React
+
+---
+
+##  Why This Project Matters
+
+This project demonstrates practical understanding of:
+
+- Client-side cryptography
+- Secure key derivation and encryption flows
+- Zero-knowledge system design
+- State management for sensitive data
+- Real-world security vs usability tradeoffs
+
+These concepts are used in privacy-focused systems such as secure vaults, password managers, and encrypted note applications.
+
+---
+
+##  What I Learned
+
+- Designing secure frontend architectures
+- Working with low-level Web Crypto API
+- Handling sensitive state in memory safely
+- Building production-style authentication flows
+- Thinking in terms of system design, not just UI
 
 **Live Demo**: [vault-app-gray.vercel.app](https://vault-app-gray.vercel.app)
 ## Contact
@@ -87,13 +128,14 @@ Feel free to reach out if you have questions or want to connect:
 
 - [LinkedIn](https://www.linkedin.com/in/abdennour-darkaoui-2b2873356/)
 - [abd@darkaoui.org](mailto:abd@darkaoui.org)
+-[My portfolio] (https://www.darkaoui.org)
 
 
 - My Discord:abdel_07532
 
 ## Preview
 
-![Vault App Preview](https://raw.githubusercontent.com/7abd/vault-app/readme-edits/public/vault-preview.png)
+![Vault App Preview](public/vault-preview.png)
 
 
 ##  Installation & Setup
